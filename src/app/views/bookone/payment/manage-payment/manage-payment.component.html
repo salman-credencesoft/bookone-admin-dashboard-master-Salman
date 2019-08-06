@@ -1,0 +1,148 @@
+<!--app-main-nav *ngIf="showNavbar"></app-main-nav-->
+<mat-progress-bar
+  *ngIf="loader"
+  color="warn"
+  mode="indeterminate"
+></mat-progress-bar>
+<br />
+<br />
+
+<mat-card class="p-2 custom__card">
+  <mat-card-content>
+    <div fxLayout="column">
+      <div class="example-header" *ngIf="!booking" fxLayout="row">
+        <mat-form-field appearance="legacy" color="primary">
+          <input
+            matInput
+            (keyup)="applyFilter($event.target.value)"
+            placeholder="Filter"
+          />
+        </mat-form-field>
+        <button
+          mat-icon-button
+          style="color:rgb(0, 0, 0);"
+          focusable="false"
+          (click)="createPaymentDialog()"
+        >
+          <mat-icon>add</mat-icon> New Payment
+        </button>
+      </div>
+
+      <div fxFlex="100">
+        <div class="example-container mat-elevation-z8">
+          <mat-table [dataSource]="dataSource" matSort>
+            <!-- Payment ID -->
+            <ng-container matColumnDef="id">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>
+                <h3 style="color:rgb(0, 0, 0);">ID</h3>
+              </mat-header-cell>
+              <mat-cell *matCellDef="let row" data-label="id">
+                {{ row.id }}
+              </mat-cell>
+            </ng-container>
+
+            <!-- Payment REF -->
+            <ng-container matColumnDef="paymentReference">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>
+                <h3 style="color:rgb(0, 0, 0);">Ref#</h3>
+              </mat-header-cell>
+              <mat-cell *matCellDef="let row" data-label="referenceNumber">
+                {{ row.referenceNumber }}
+              </mat-cell>
+            </ng-container>
+
+            <!-- Payment REF -->
+            <ng-container matColumnDef="description">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>
+                <h3 style="color:rgb(0, 0, 0);">Description</h3>
+              </mat-header-cell>
+              <mat-cell *matCellDef="let row" data-label="Desc">
+                {{ row.description }}
+              </mat-cell>
+            </ng-container>
+
+            <!-- Amount  -->
+            <ng-container matColumnDef="amount">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>
+                <h3 style="color:rgb(0, 0, 0);">Amount</h3>
+              </mat-header-cell>
+              <mat-cell *matCellDef="let row" data-label="amount">
+                {{ row.amount }}
+              </mat-cell>
+            </ng-container>
+
+            <!-- Mode -->
+            <ng-container matColumnDef="paymentMode">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>
+                <h3 style="color:rgb(0, 0, 0);">Mode</h3>
+              </mat-header-cell>
+              <mat-cell *matCellDef="let row" data-label="name">
+                {{ row.paymentMode }}
+              </mat-cell>
+            </ng-container>
+
+            <!-- Status Column -->
+            <ng-container matColumnDef="status">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>
+                <h3 style="color:rgb(0, 0, 0);">Status</h3>
+              </mat-header-cell>
+              <mat-cell
+                *matCellDef="let row"
+                [style.color]="row.color"
+                data-label="status"
+              >
+                {{ row.status }}
+              </mat-cell>
+            </ng-container>
+
+            <!-- Action Column -->
+            <ng-container matColumnDef="action">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>
+                <h3 style="color:rgb(0, 0, 0);">Action</h3>
+              </mat-header-cell>
+              <mat-cell
+                *matCellDef="let row"
+                [style.color]="row.color"
+                data-label="action"
+              >
+                <button
+                  mat-icon-button
+                  [matMenuTriggerFor]="taskOptions"
+                  class="task__options"
+                  color="primary"
+                >
+                  <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #taskOptions="matMenu">
+                  <button
+                    mat-menu-item
+                    (click)="updatePaymentDialog(row)"
+                    color="primary"
+                  >
+                    <mat-icon>edit</mat-icon><span>Edit</span>
+                  </button>
+                  <button
+                    mat-menu-item
+                    (click)="updatePaymentDialog(row)"
+                    color="warn"
+                  >
+                    <mat-icon>add</mat-icon><span>New</span>
+                  </button>
+                </mat-menu>
+              </mat-cell>
+            </ng-container>
+            <mat-header-row
+              *matHeaderRowDef="displayedColumns"
+            ></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns"> </mat-row>
+          </mat-table>
+        </div>
+
+        <mat-paginator
+          *ngIf="!booking"
+          [pageSizeOptions]="[5, 10, 25, 100]"
+        ></mat-paginator>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>

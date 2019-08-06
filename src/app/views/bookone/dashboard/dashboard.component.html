@@ -1,0 +1,121 @@
+<!--app-main-nav></app-main-nav-->
+<mat-progress-bar
+  *ngIf="loader"
+  color="warn"
+  mode="indeterminate"
+></mat-progress-bar>
+<br />
+<br />
+<div fxLayout="row" fxLayoutWrap="wrap">
+  <div fxFlex.xs="100" fxFlex.lg="25" fxFlex.lt-lg="50">
+    <mat-card class="default">
+      <mat-card-content fxLayoutAlign="start center">
+        <div class="p-1">
+          <mat-card-subtitle class="mb-0"
+            ><h3 style="color:rgb(0, 0, 0);">
+              Today's Check-In
+            </h3></mat-card-subtitle
+          >
+          <h3 class="mat-h3--light m-0">{{ noOfGuestCheckingInToday }}</h3>
+        </div>
+        <span fxFlex></span>
+      </mat-card-content>
+    </mat-card>
+  </div>
+  <div fxFlex.xs="100" fxFlex.lg="25" fxFlex.lt-lg="50">
+    <mat-card class="default">
+      <mat-card-content fxLayoutAlign="start center">
+        <div class="p-1">
+          <mat-card-subtitle class="mb-0"
+            ><h3 style="color:rgb(0, 0, 0);">
+              Today's Check-Out
+            </h3></mat-card-subtitle
+          >
+          <h3 class="mat-h3--light m-0">{{ noOfGuestCheckingOutToday }}</h3>
+        </div>
+        <span fxFlex></span>
+      </mat-card-content>
+    </mat-card>
+  </div>
+  <div fxFlex.xs="100" fxFlex.lg="25" fxFlex.lt-lg="50">
+    <mat-card class="default">
+      <mat-card-content fxLayoutAlign="start center">
+        <div class="p-1">
+          <mat-card-subtitle class="mb-0"
+            ><h3 style="color:rgb(0, 0, 0);">
+              Today's In-House
+            </h3></mat-card-subtitle
+          >
+          <h3 class="mat-h3--light m-0">{{ noOfGuestInHouseToday }}</h3>
+        </div>
+        <span fxFlex></span>
+      </mat-card-content>
+    </mat-card>
+  </div>
+  <div fxFlex.xs="100" fxFlex.lg="25" fxFlex.lt-lg="50">
+    <mat-card class="default">
+      <mat-card-content fxLayoutAlign="start center">
+        <div class="p-1">
+          <mat-card-subtitle class="mb-0"
+            ><h3 style="color:rgb(0, 0, 0);">Financial</h3></mat-card-subtitle
+          >
+          <h3 class="mat-h3--light m-0">
+            ${{ getBalance() | number: ".2-2" }}
+          </h3>
+        </div>
+        <span fxFlex></span>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
+<div>
+  <mat-accordion class="example-headers-align" fxFlex="100" fxFlex.gt-xs="100">
+    <mat-expansion-panel hideToggle>
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <h3 style="color:rgb(0, 0, 0);">Expense Summary :</h3>
+        </mat-panel-title>
+        <mat-panel-description
+          ><h3 style="color:rgb(0, 0, 0);">
+            Expense : ${{ totalExpense | number: ".2-2" }}
+          </h3>
+          <mat-icon>money_off</mat-icon>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <app-expense-summary
+        (totalExpenseEmit)="getTotalExpense($event)"
+      ></app-expense-summary>
+    </mat-expansion-panel>
+
+    <mat-expansion-panel hideToggle>
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <h3 style="color:rgb(0, 0, 0);">Payment Summary</h3>
+        </mat-panel-title>
+        <mat-panel-description>
+          <h3 style="color:rgb(0, 0, 0);">
+            Income : ${{ totalPayment | number: ".2-2" }}
+          </h3>
+          <mat-icon>monetization_on</mat-icon>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <app-payment-summary
+        (totalPaymentEmit)="getTotalPayment($event)"
+      ></app-payment-summary>
+    </mat-expansion-panel>
+
+    <mat-expansion-panel hideToggle>
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <h3 style="color:rgb(0, 0, 0);">Room Allocation</h3>
+        </mat-panel-title>
+        <mat-panel-description
+          ><h3 style="color:rgb(0, 0, 0);">Today's Room View</h3>
+          <mat-icon>room</mat-icon>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <app-roomview></app-roomview>
+    </mat-expansion-panel>
+  </mat-accordion>
+</div>
+

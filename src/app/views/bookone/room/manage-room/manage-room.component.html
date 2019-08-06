@@ -1,0 +1,79 @@
+<mat-tab-group
+  [selectedIndex]="selected.value"
+  (selectedIndexChange)="selected.setValue($event)"
+>
+  <mat-tab *ngFor="let tab of tabs; let index = index" [label]="tab">
+    <!-- Personal Details Section -->
+    <mat-accordion class="example-headers-align">
+      <mat-expansion-panel
+        [expanded]="step === 0"
+        (opened)="setStep(0)"
+        hideToggle
+      >
+        <mat-expansion-panel-header>
+          <mat-panel-description fxLayoutAlign="center center">
+            Room Details
+          </mat-panel-description>
+          <mat-icon>room</mat-icon>
+        </mat-expansion-panel-header>
+        <app-room
+          (saveRoomDetailsEvent)="addRoomToProperty($event)"
+          [room]="room"
+        ></app-room>
+        <!--mat-action-row>
+<button mat-button color="primary" (click)="nextStep()">Next</button>
+</mat-action-row-->
+      </mat-expansion-panel>
+    </mat-accordion>
+    <!-- Amenity  Section -->
+    <!--mat-accordion class="example-headers-align">
+<mat-expansion-panel [expanded]="step === 1" (opened)="setStep(1)" hideToggle>
+<mat-expansion-panel-header>
+<mat-panel-description fxLayoutAlign="center center">
+Amenity Details
+</mat-panel-description>
+<mat-icon>phone</mat-icon>
+</mat-expansion-panel-header>
+<mat-action-row>
+<button mat-button color="warn" (click)="prevStep()">Previous</button>
+<button mat-button color="primary" (click)="nextStep()">Next</button>
+</mat-action-row>
+</mat-expansion-panel>
+</mat-accordion-->
+    <!-- Services  Section -->
+    <!--mat-accordion class="example-headers-align">
+<mat-expansion-panel [expanded]="step === 2" (opened)="setStep(2)" hideToggle>
+<mat-expansion-panel-header>
+<mat-panel-description fxLayoutAlign="center center">Services</mat-panel-description>
+<mat-icon>home</mat-icon>
+</mat-expansion-panel-header>
+<mat-action-row>
+<button mat-button color="warn" (click)="prevStep()">Previous</button>
+<button mat-button color="primary" (click)="nextStep()">Next</button>
+</mat-action-row>
+</mat-expansion-panel>
+</mat-accordion-->
+
+    <div fxLayoutAlign.gt-xs="space-between start" fxLayout.xs="column">
+      <button
+        mat-raised-button
+        class="example-delete-tab-button"
+        [disabled]="tabs.length === 1"
+        mat-button
+        color="warn"
+        (click)="removeRoom(index)"
+      >
+        Delete Room
+      </button>
+      <button
+        mat-raised-button
+        mat-button
+        color="primary"
+        class="example-add-tab-button"
+        (click)="addRoom(true)"
+      >
+        Add Room
+      </button>
+    </div>
+  </mat-tab>
+</mat-tab-group>

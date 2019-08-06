@@ -1,0 +1,239 @@
+<app-loader-dialog [showLoader]="loader"></app-loader-dialog>
+<form class="form" name="expenseForm" [formGroup]="expenseForm">
+  <mat-card fxFlex="100" fxFlex.gt-xs="100">
+    <mat-card-title>Expense Entry Details</mat-card-title>
+    <mat-card-content>
+      <div>
+        <div fxLayoutAlign.gt-xs="space-between start" fxLayout.xs="column">
+          <!-- Date Section-->
+          <mat-form-field
+            fxFlex="100"
+            fxFlex.gt-xs="48.50"
+            appearance="outline"
+            color="primary"
+          >
+            <input
+              matInput
+              [matDatepicker]="expenseDate"
+              placeholder="Date Of Expense"
+              class="form-control"
+              [formControl]="dateOfExpense"
+              [(ngModel)]="date"
+              required
+            />
+            <mat-hint>Date of the expense as per the receipt.</mat-hint>
+            <mat-datepicker-toggle matSuffix [for]="expenseDate">
+              <mat-icon matDatepickerToggleIcon>input</mat-icon>
+            </mat-datepicker-toggle>
+            <mat-datepicker #expenseDate color="primary"></mat-datepicker>
+            <mat-error *ngIf="dateOfExpense.invalid"
+              >Provide the Date of Expense!</mat-error
+            >
+          </mat-form-field>
+          <!-- Property Section-->
+          <!--mat-form-field fxFlex="100" fxFlex.gt-xs="48.50">
+            <mat-select placeholder="Property Name" class="form-control" [formControl]="propertyName" [(ngModel)]="expense.propertyId">
+              <mat-option *ngFor="let property of propertyList" [value]="property.value">
+                {{ property.viewValue }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field-->
+          <mat-form-field
+            fxFlex="100"
+            fxFlex.gt-xs="48.50"
+            appearance="outline"
+            color="primary"
+          >
+            <input
+              type="text"
+              matInput
+              placeholder="Booking Reference No"
+              class="form-control"
+              [formControl]="referenceNumber"
+              [(ngModel)]="expense.bookingId"
+            />
+            <mat-hint
+              >Mention the Booking Reference to charge the Guest.</mat-hint
+            >
+          </mat-form-field>
+        </div>
+        <div fxLayoutAlign.gt-xs="space-between start" fxLayout.xs="column">
+          <!-- ExpenseList Section-->
+          <mat-form-field
+            fxFlex="100"
+            fxFlex.gt-xs="48.50"
+            appearance="outline"
+            color="primary"
+          >
+            <mat-select
+              placeholder="Expense Type"
+              class="form-control"
+              [formControl]="typeOfExpense"
+              [(ngModel)]="expense.name"
+              required
+            >
+              <mat-option
+                *ngFor="let expenseItem of expensesList"
+                [value]="expenseItem.value"
+              >
+                {{ expenseItem.viewValue }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="typeOfExpense.invalid"
+              >Select a Expense Type!</mat-error
+            >
+          </mat-form-field>
+          <!-- Expense Description Section-->
+          <mat-form-field
+            fxFlex="100"
+            fxFlex.gt-xs="48.50"
+            appearance="outline"
+            color="primary"
+          >
+            <input
+              type="text"
+              matInput
+              placeholder="Description"
+              class="form-control"
+              [formControl]="description"
+              [(ngModel)]="expense.description"
+              required
+            />
+            <mat-hint>Details of the Expenditure.</mat-hint>
+            <mat-error *ngIf="description.invalid"
+              >Invalid Description!</mat-error
+            >
+          </mat-form-field>
+        </div>
+        <div fxLayoutAlign.gt-xs="space-between start" fxLayout.xs="column">
+          <!-- Expense Amount Section-->
+          <mat-form-field
+            fxFlex="100"
+            fxFlex.gt-xs="48.50"
+            appearance="outline"
+            color="primary"
+          >
+            <input
+              type="number"
+              matInput
+              placeholder="Expense Amount"
+              class="form-control"
+              [formControl]="expenseAmount"
+              [(ngModel)]="expense.amount"
+              required
+            />
+            <span matPrefix>$&nbsp;</span>
+            <mat-hint>Amount including GST and other taxes.</mat-hint>
+            <mat-error *ngIf="expenseAmount.invalid"
+              >Invalid Expense Amount!</mat-error
+            >
+          </mat-form-field>
+          <!-- Receipt Number Section-->
+          <mat-form-field
+            fxFlex="100"
+            fxFlex.gt-xs="48.50"
+            appearance="outline"
+            color="primary"
+          >
+            <input
+              type="text"
+              matInput
+              placeholder="Receipt Number"
+              class="form-control"
+              [formControl]="receiptNumber"
+              [(ngModel)]="expense.receiptNumber"
+            />
+            <mat-hint>Receipt of the invoice.</mat-hint>
+          </mat-form-field>
+        </div>
+        <div fxLayoutAlign.gt-xs="space-between start" fxLayoutGap="5px">
+          <div>
+            <mat-form-field
+              fxFlex="100"
+              fxFlex.gt-xs="100"
+              appearance="outline"
+              color="primary"
+            >
+              <input
+                matInput
+                #file2
+                placeholder="Choose file"
+                readonly
+                class="pointer--cursor"
+                (click)="upload2.click()"
+              />
+              <input
+                [hidden]="true"
+                type="file"
+                #upload2
+                (change)="uploadFile($event, file2)"
+              />
+              <mat-hint>Attach Receipt.</mat-hint>
+            </mat-form-field>
+            <button
+              type="button"
+              mat-button
+              color="accent"
+              mat-mini-fab
+              (click)="upload2.click()"
+            >
+              <mat-icon>attachment</mat-icon>
+            </button>
+          </div>
+          <mat-form-field
+            fxFlex="100"
+            fxFlex.gt-xs="48.50"
+            appearance="outline"
+            color="primary"
+          >
+            <input
+              type="text"
+              matInput
+              placeholder="External Booking Reference No"
+              class="form-control"
+              [formControl]="externalReferenceNumber"
+              [(ngModel)]="expense.externalReference"
+            />
+            <mat-hint
+              >Mention the External Booking Reference to charge the
+              Guest.</mat-hint
+            >
+          </mat-form-field>
+        </div>
+      </div>
+      <div fxLayoutAlign.gt-xs="space-between start" fxLayout.xs="column">
+        <mat-form-field
+          fxFlex="100"
+          fxFlex.gt-xs="100"
+          color="primary"
+          appearance="outline"
+        >
+          <textarea
+            matInput
+            placeholder="Expense Notes"
+            class="form-control"
+            [formControl]="expenseNotes"
+            [(ngModel)]="expense.notes"
+          ></textarea>
+          <mat-hint>** notes</mat-hint>
+        </mat-form-field>
+      </div>
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-button color="warn" (click)="reset()">Reset</button>
+      <button
+        mat-button
+        type="submit"
+        color="primary"
+        [disabled]="expenseForm.invalid"
+        (click)="onSubmit()"
+      >
+        Save
+      </button>
+      <button mat-button color="warn" (click)="close()">
+        <mat-icon>close</mat-icon>
+        Close
+      </button>
+    </mat-card-actions>
+  </mat-card>
+</form>

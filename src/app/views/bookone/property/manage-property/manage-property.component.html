@@ -1,0 +1,208 @@
+<!--app-main-nav></app-main-nav-->
+<mat-progress-bar
+  *ngIf="loader"
+  color="warn"
+  mode="indeterminate">
+</mat-progress-bar>
+<br />
+<br />
+<div fxLayout="row wrap">
+  <div
+  fxFlex="100" fxFlex.gt-sm="30" fxFlex.sm="50"
+    fxLayoutWrap="Wrap"
+    fxLayoutAlign.gt-sm="start start">
+
+      <mat-card class="mat-bg--default">
+        <div fxLayout="column" fxLayoutAlign="center center">
+          <div class="profile-menu__list">
+            <button mat-icon-button [matMenuTriggerFor]="taskOptions" class="task__options">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+            <mat-menu #taskOptions="matMenu">
+              <!--button mat-menu-item (click)="createYearlyRatesForProperty()">
+                    <mat-icon>build</mat-icon><span>Generate Yearly Rate</span>
+              </button-->
+              <button mat-menu-item (click)="createRoomDialog(property.id)">
+                <mat-icon>room</mat-icon><span>Add Room</span>
+              </button>
+              <button mat-menu-item (click)="bookProperty(property)">
+                <mat-icon>book</mat-icon><span>New Booking</span>
+              </button>
+              <!--button mat-menu-item>
+                <mat-icon>edit</mat-icon><span>Edit</span>
+              </button-->
+            </mat-menu>
+          </div>
+          <div class="profile__pic">
+            <img src="{{ property.imageUrl }}" />
+          </div>
+          <!--<div class="profile__pic">
+            <qrcode [qrdata]="url" [size]="100" [level]="'M'"></qrcode>
+           </div> -->
+
+          <h3 class="mat-h3--light text-center mb-0 mt-5">
+            {{ property.name }}
+          </h3>
+          <span class="mat-h5">{{ property.slogan }}</span>
+          <span class="mat-h5">
+            <p>
+              {{ property.address.streetNumber }} &nbsp;
+              {{ property.address.streetName }} , {{ property.address.suburb }},
+              &nbsp;<br />
+              {{ property.address.city }}, {{ property.address.country }},&nbsp;
+              {{ property.address.postcode }}
+            </p>
+          </span>
+        </div>
+        <div
+          class="profile__nav mat-card--bg pt-1 pb-1"
+        >
+          <mat-nav-list class="icon--48" >
+            <mat-list-item>
+              <mat-icon>email</mat-icon>
+              <div fxLayout="column">
+                <span class="font-weight--500">{{ property.email }}</span>
+                <span class="mat-hint mat-h5 m-0">Email</span>
+              </div>
+            </mat-list-item>
+            <mat-divider></mat-divider>
+            <mat-list-item>
+              <mat-icon>phone</mat-icon>
+              <div fxLayout="column">
+                <span class="font-weight--500">{{ property.landphone }}</span>
+                <span class="mat-hint mat-h5 m-0">Phone</span>
+              </div>
+            </mat-list-item>
+            <mat-list-item>
+              <mat-icon>mobile_screen_share</mat-icon>
+              <div fxLayout="column">
+                <span class="font-weight--500">{{ property.mobile }}</span>
+                <span class="mat-hint mat-h5 m-0">Mobile</span>
+              </div>
+            </mat-list-item>
+            <mat-divider></mat-divider>
+            <mat-list-item>
+              <mat-icon>person_pin</mat-icon>
+              <div fxLayout="column">
+                <span class="font-weight--500"
+                  >{{ property.managerFirstName }} &nbsp;
+                  {{ property.managerLastName }}</span
+                >
+                <span class="mat-hint mat-h5 m-0">Manager's Name</span>
+              </div>
+            </mat-list-item>
+            <mat-list-item>
+              <mat-icon>email</mat-icon>
+              <div fxLayout="column">
+                <span class="font-weight--500">{{
+                  property.managerEmailAddress
+                }}</span>
+                <span class="mat-hint mat-h5 m-0">Manager's Email</span>
+              </div>
+            </mat-list-item>
+            <mat-list-item>
+              <mat-icon>phone</mat-icon>
+              <div fxLayout="column">
+                <span class="font-weight--500">{{
+                  property.managerContactNo
+                }}</span>
+                <span class="mat-hint mat-h5 m-0">Manager's Phone</span>
+              </div>
+            </mat-list-item>
+          </mat-nav-list>
+        </div>
+      </mat-card>
+    </div>
+
+  <div fxFlex="100" fxFlex.gt-sm="70" fxFlex.sm="50" fxLayoutWrap="Wrap">
+    <div fxFlex.gt-md="100" fxFlex="100">
+      <mat-accordion class="example-headers-align" *ngFor="let room of rooms">
+        <mat-expansion-panel
+          class="mat-bg--default"
+          [expanded]="step === 0"
+          (opened)="setStep(0)"
+          hideToggle
+        >
+          <mat-expansion-panel-header>
+            <mat-panel-description fxLayoutAlign="center center">
+              {{ room.name }}
+            </mat-panel-description>
+            <mat-icon>room</mat-icon>
+          </mat-expansion-panel-header>
+          <mat-card class="mat-bg--default">
+            <mat-card-header>
+              <mat-card-title>{{ room.name }}</mat-card-title>
+            </mat-card-header>
+            <mat-card-content class="p-1">
+              <div class="profile-menu__list">
+                <button
+                  mat-icon-button
+                  [matMenuTriggerFor]="taskOptions"
+                  class="task__options"
+                >
+                  <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #taskOptions="matMenu">
+                  <button mat-menu-item (click)="book(room)">
+                    <mat-icon>book</mat-icon><span>Book</span>
+                  </button>
+                  <button mat-menu-item (click)="updateRoomDialog(room)">
+                    <mat-icon>edit</mat-icon><span>Edit</span>
+                  </button>
+                </mat-menu>
+              </div>
+              <div
+                fxLayoutAlign.gt-xs="space-between start"
+                fxLayout.xs="column"
+              >
+                <div fxFlex="100" fxFlex.gt-xs="48.50">
+                  <span class="mat-hint mat-h5 m-0">Name:</span>
+                  <span class="font-weight--500">{{ room.name }} </span>
+                </div>
+                <div fxFlex="100" fxFlex.gt-xs="48.50">
+                  <span class="mat-hint mat-h5 m-0">Total (no of rooms):</span>
+                  <span class="font-weight--500">{{ room.noOfRooms }} </span>
+                </div>
+              </div>
+              <div
+                fxLayoutAlign.gt-xs="space-between start"
+                fxLayout.xs="column"
+              >
+                <div fxFlex="100" fxFlex.gt-xs="48.50">
+                  <span class="mat-hint mat-h5 m-0">No Of Person (min):</span>
+                  <span class="font-weight--500"
+                    >{{ room.minimumOccupancy }}
+                  </span>
+                </div>
+                <div fxFlex="100" fxFlex.gt-xs="48.50">
+                  <span class="mat-hint mat-h5 m-0">No Of Person (max):</span>
+                  <span class="font-weight--500"
+                    >{{ room.maximumOccupancy }}
+                  </span>
+                </div>
+              </div>
+              <div
+                fxLayoutAlign.gt-xs="space-between start"
+                fxLayout.xs="column"
+              >
+                <div fxFlex="100" fxFlex.gt-xs="48.50">
+                  <span class="mat-hint mat-h5 m-0">Room Only Price: </span>
+                  <span class="font-weight--500"
+                    >{{ room.roomOnlyPrice }}
+                  </span>
+                </div>
+                <div fxFlex="100" fxFlex.gt-xs="48.50">
+                  <span class="mat-hint mat-h5 m-0">Extra Person Charge:</span>
+                  <span class="font-weight--500">{{
+                    room.extraChargePerPerson
+                  }}</span>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </div>
+  </div>
+  <!-- Room Details Section fxFlex.gt-sm="calc(100%-350px)"-->
+</div>

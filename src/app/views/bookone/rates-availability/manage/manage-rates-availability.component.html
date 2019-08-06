@@ -1,0 +1,509 @@
+<!--app-main-nav></app-main-nav-->
+<mat-progress-bar
+  *ngIf="loader"
+  mode="indeterminate"
+  color="warn"
+></mat-progress-bar>
+<br />
+<br />
+<!-- Rates and Availability Date -->
+<mat-card>
+  <mat-card-title>{{ pageTitle }}</mat-card-title>
+  <mat-card-content>
+    <div fxLayoutAlign.gt-xs="space-between start" fxLayout.xs="column">
+      <mat-form-field
+        fxFlex="50"
+        fxFlex.gt-xs="40"
+        color="primary"
+        appearance="outline"
+      >
+        <mat-label>From Date</mat-label>
+        <input
+          matInput
+          [matDatepicker]="fromdate"
+          placeholder="From Date"
+          [formControl]="rateAndAvailFromDate"
+          [(ngModel)]="ratesAndAvailability.fromDate"
+          (dateInput)="setToDate('input', $event)"
+          (dateChange)="setToDate('change', $event)"
+          required
+        />
+        <mat-error
+          *ngIf="!ratesAndAvailability.valid && ratesAndAvailability.touched"
+          >From Date required!</mat-error
+        >
+        <mat-datepicker-toggle matSuffix [for]="fromdate">
+          <mat-icon matDatepickerToggleIcon>calendar_today</mat-icon>
+        </mat-datepicker-toggle>
+        <mat-datepicker #fromdate color="primary"></mat-datepicker>
+      </mat-form-field>
+      <mat-form-field
+        fxFlex="50"
+        fxFlex.gt-xs="40"
+        color="primary"
+        appearance="outline"
+      >
+        <mat-label>To Date</mat-label>
+        <input
+          matInput
+          [matDatepicker]="todate"
+          placeholder=" Select To Date"
+          [formControl]="rateAndAvailToDate"
+          [(ngModel)]="ratesAndAvailability.toDate"
+          [min]="minToDate"
+          [max]="maxToDate"
+          required
+        />
+        <mat-error
+          *ngIf="!ratesAndAvailability.valid && ratesAndAvailability.touched"
+          >To Date required!</mat-error
+        >
+        <mat-datepicker-toggle matSuffix [for]="todate">
+          <mat-icon matDatepickerToggleIcon>calendar_today</mat-icon>
+        </mat-datepicker-toggle>
+        <mat-datepicker #todate color="primary"></mat-datepicker>
+      </mat-form-field>
+      <button
+        fxFlex="100"
+        fxFlex.gt-xs="10"
+        mat-raised-button
+        type="button"
+        (click)="getRatesAndAvailability()"
+        color="primary"
+        [disabled]="loader"
+      >
+        Find Rates
+      </button>
+    </div>
+    <div>
+      <mat-accordion
+        class="example-headers-align"
+        fxFlex="100"
+        fxFlex.gt-xs="100"
+      >
+        <mat-expansion-panel hideToggle>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Manage Rates & Availability
+            </mat-panel-title>
+            <mat-panel-description
+              >{{ property.name }}
+              <mat-icon>arrow_downward</mat-icon>
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+          <div class="example-container mat-elevation-z8">
+            <mat-table [dataSource]="dataSource" matSort>
+              <!-- Date -->
+              <ng-container matColumnDef="date">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>
+                  Date
+                </mat-header-cell>
+                <mat-cell *matCellDef="let row" data-label="date">
+                  {{ row.date }}
+                </mat-cell>
+              </ng-container>
+
+              <!-- Price -->
+              <ng-container matColumnDef="price">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>
+                  Price
+                </mat-header-cell>
+                <mat-cell *matCellDef="let row" data-label="price">
+                  <mat-label *ngIf="!editMode || !(selectedRow == row.id)">{{
+                    row.price
+                  }}</mat-label>
+                  <mat-form-field
+                    *ngIf="editMode && selectedRow == row.id"
+                    appearance="outline"
+                    color="primary"
+                  >
+                    <mat-label
+                      >Price:{{ ratesAndAvailability.price }}</mat-label
+                    >
+                    <input
+                      type="number"
+                      min="0"
+                      matInput
+                      placeholder="row.price"
+                      [(ngModel)]="ratesAndAvailability.price"
+                    />
+                  </mat-form-field>
+                </mat-cell>
+              </ng-container>
+              <!-- Total Number of Rooms -->
+              <ng-container matColumnDef="total">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>
+                  Total
+                </mat-header-cell>
+                <mat-cell *matCellDef="let row" data-label="total">
+                  <mat-label *ngIf="!editMode || !(selectedRow == row.id)">{{
+                    row.totalNoRooms
+                  }}</mat-label>
+                  <mat-form-field
+                    *ngIf="editMode && selectedRow == row.id"
+                    appearance="outline"
+                    color="primary"
+                  >
+                    <mat-label
+                      >No Of Rooms:{{
+                        ratesAndAvailability.totalNoRooms
+                      }}</mat-label
+                    >
+                    <input
+                      type="number"
+                      min="0"
+                      max="{{ row.totalNoRooms }}"
+                      matInput
+                      placeholder="row.totalNoRooms"
+                      [(ngModel)]="ratesAndAvailability.totalNoRooms"
+                    />
+                  </mat-form-field>
+                </mat-cell>
+              </ng-container>
+              <!--  No Of Booked -->
+              <ng-container matColumnDef="noOfBooked">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>
+                  Booked
+                </mat-header-cell>
+                <mat-cell *matCellDef="let row" data-label="noOfBooked">
+                  <mat-label *ngIf="!editMode || !(selectedRow == row.id)">{{
+                    row.noOfBooked
+                  }}</mat-label>
+                  <mat-form-field
+                    *ngIf="editMode && selectedRow == row.id"
+                    appearance="outline"
+                    color="primary"
+                  >
+                    <mat-label
+                      >Booked:{{ ratesAndAvailability.noOfBooked }}</mat-label
+                    >
+                    <input
+                      type="number"
+                      min="0"
+                      max="{{ row.totalNoRooms }}"
+                      matInput
+                      placeholder="row.noOfBooked"
+                      [(ngModel)]="ratesAndAvailability.noOfBooked"
+                    />
+                  </mat-form-field>
+                </mat-cell>
+              </ng-container>
+              <!--  No Of Hold -->
+              <ng-container matColumnDef="noOfOnHold">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>
+                  Hold
+                </mat-header-cell>
+                <mat-cell *matCellDef="let row" data-label="OnHold">
+                  <mat-label *ngIf="!editMode || !(selectedRow == row.id)">{{
+                    row.noOfOnHold
+                  }}</mat-label>
+                  <mat-form-field
+                    *ngIf="editMode && selectedRow == row.id"
+                    appearance="outline"
+                    color="primary"
+                  >
+                    <mat-label
+                      >OnHold:{{ ratesAndAvailability.noOfOnHold }}</mat-label
+                    >
+                    <input
+                      type="number"
+                      min="0"
+                      max="{{ row.totalNoRooms }}"
+                      matInput
+                      placeholder="row.noOfOnHold"
+                      [(ngModel)]="ratesAndAvailability.noOfOnHold"
+                    />
+                  </mat-form-field>
+                </mat-cell>
+              </ng-container>
+              <!--  No Of Available -->
+              <ng-container matColumnDef="noOfAvailable">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>
+                  Available
+                </mat-header-cell>
+                <mat-cell *matCellDef="let row" data-label="Available">
+                  <mat-label *ngIf="!editMode || !(selectedRow == row.id)">{{
+                    row.noOfAvailable
+                  }}</mat-label>
+                  <mat-form-field
+                    *ngIf="editMode && selectedRow == row.id"
+                    appearance="outline"
+                    color="primary"
+                  >
+                    <mat-label
+                      >Available:{{
+                        ratesAndAvailability.noOfAvailable
+                      }}</mat-label
+                    >
+                    <input
+                      type="number"
+                      min="0"
+                      max="{{ row.totalNoRooms }}"
+                      matInput
+                      placeholder="row.noOfAvailable"
+                      [(ngModel)]="ratesAndAvailability.noOfAvailable"
+                    />
+                  </mat-form-field>
+                </mat-cell>
+              </ng-container>
+              <ng-container matColumnDef="action">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>
+                  Action
+                </mat-header-cell>
+                <mat-cell *matCellDef="let row" data-label="Action">
+                  <span>
+                    <button
+                      mat-button
+                      color="primary"
+                      *ngIf="!editMode || !(selectedRow == row.id)"
+                      (click)="edit(row)"
+                    >
+                      <mat-icon>edit</mat-icon>
+                    </button>
+                    <button
+                      mat-button
+                      color="primary"
+                      *ngIf="editMode && selectedRow == row.id"
+                      (click)="save(ratesAndAvailability, row)"
+                    >
+                      <mat-icon>save</mat-icon>
+                    </button>
+                    <button
+                      mat-button
+                      color="warn"
+                      *ngIf="editMode && selectedRow == row.id"
+                      (click)="cancel()"
+                    >
+                      <mat-icon>cancel</mat-icon>
+                    </button>
+                  </span>
+                </mat-cell>
+              </ng-container>
+
+              <mat-header-row
+                *matHeaderRowDef="displayedColumns"
+              ></mat-header-row>
+              <mat-row *matRowDef="let row; columns: displayedColumns">
+              </mat-row>
+            </mat-table>
+          </div>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </div>
+    <div>
+      <mat-accordion
+        class="example-headers-align"
+        fxFlex="100"
+        fxFlex.gt-xs="100"
+      >
+        <mat-expansion-panel *ngFor="let room of roomsWithData" hideToggle>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Manage Rates & Availability
+            </mat-panel-title>
+            <mat-panel-description
+              >{{ room.name }}
+              <mat-icon>arrow_downward</mat-icon>
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+          <div class="example-container mat-elevation-z8">
+            <mat-table [dataSource]="room.dataSource" matSort>
+              <!-- Date -->
+              <ng-container matColumnDef="date">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>
+                  Date
+                </mat-header-cell>
+                <mat-cell *matCellDef="let row" data-label="date">
+                  {{ row.date }}
+                </mat-cell>
+              </ng-container>
+
+              <!-- Price -->
+              <ng-container matColumnDef="price">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>
+                  Price
+                </mat-header-cell>
+                <mat-cell *matCellDef="let row" data-label="price">
+                  <mat-label *ngIf="!editMode || !(selectedRow == row.id)">{{
+                    row.price
+                  }}</mat-label>
+                  <mat-form-field
+                    *ngIf="editMode && selectedRow == row.id"
+                    appearance="outline"
+                    color="primary"
+                  >
+                    <mat-label
+                      >Price:{{ ratesAndAvailability.price }}</mat-label
+                    >
+                    <input
+                      type="number"
+                      min="0"
+                      matInput
+                      placeholder="row.price"
+                      [(ngModel)]="ratesAndAvailability.price"
+                    />
+                  </mat-form-field>
+                </mat-cell>
+              </ng-container>
+              <!-- Total Number of Rooms -->
+              <ng-container matColumnDef="total">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>
+                  Total
+                </mat-header-cell>
+                <mat-cell *matCellDef="let row" data-label="total">
+                  <mat-label *ngIf="!editMode || !(selectedRow == row.id)">{{
+                    row.totalNoRooms
+                  }}</mat-label>
+                  <mat-form-field
+                    *ngIf="editMode && selectedRow == row.id"
+                    appearance="outline"
+                    color="primary"
+                  >
+                    <mat-label
+                      >No Of Rooms:{{
+                        ratesAndAvailability.totalNoRooms
+                      }}</mat-label
+                    >
+                    <input
+                      type="number"
+                      min="0"
+                      max="{{ row.totalNoRooms }}"
+                      matInput
+                      placeholder="row.totalNoRooms"
+                      [(ngModel)]="ratesAndAvailability.totalNoRooms"
+                    />
+                  </mat-form-field>
+                </mat-cell>
+              </ng-container>
+              <!--  No Of Booked -->
+              <ng-container matColumnDef="noOfBooked">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>
+                  Booked
+                </mat-header-cell>
+                <mat-cell *matCellDef="let row" data-label="noOfBooked">
+                  <mat-label *ngIf="!editMode || !(selectedRow == row.id)">{{
+                    row.noOfBooked
+                  }}</mat-label>
+                  <mat-form-field
+                    *ngIf="editMode && selectedRow == row.id"
+                    appearance="outline"
+                    color="primary"
+                  >
+                    <mat-label
+                      >Booked:{{ ratesAndAvailability.noOfBooked }}</mat-label
+                    >
+                    <input
+                      type="number"
+                      min="0"
+                      max="{{ row.totalNoRooms }}"
+                      matInput
+                      placeholder="row.noOfBooked"
+                      [(ngModel)]="ratesAndAvailability.noOfBooked"
+                    />
+                  </mat-form-field>
+                </mat-cell>
+              </ng-container>
+              <!--  No Of Hold -->
+              <ng-container matColumnDef="noOfOnHold">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>
+                  Hold
+                </mat-header-cell>
+                <mat-cell *matCellDef="let row" data-label="OnHold">
+                  <mat-label *ngIf="!editMode || !(selectedRow == row.id)">{{
+                    row.noOfOnHold
+                  }}</mat-label>
+                  <mat-form-field
+                    *ngIf="editMode && selectedRow == row.id"
+                    appearance="outline"
+                    color="primary"
+                  >
+                    <mat-label
+                      >OnHold:{{ ratesAndAvailability.noOfOnHold }}</mat-label
+                    >
+                    <input
+                      type="number"
+                      min="0"
+                      max="{{ row.totalNoRooms }}"
+                      matInput
+                      placeholder="row.noOfOnHold"
+                      [(ngModel)]="ratesAndAvailability.noOfOnHold"
+                    />
+                  </mat-form-field>
+                </mat-cell>
+              </ng-container>
+              <!--  No Of Available -->
+              <ng-container matColumnDef="noOfAvailable">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>
+                  Available
+                </mat-header-cell>
+                <mat-cell *matCellDef="let row" data-label="Available">
+                  <mat-label *ngIf="!editMode || !(selectedRow == row.id)">{{
+                    row.noOfAvailable
+                  }}</mat-label>
+                  <mat-form-field
+                    *ngIf="editMode && selectedRow == row.id"
+                    appearance="outline"
+                    color="primary"
+                  >
+                    <mat-label
+                      >Available:{{
+                        ratesAndAvailability.noOfAvailable
+                      }}</mat-label
+                    >
+                    <input
+                      type="number"
+                      min="0"
+                      max="{{ row.totalNoRooms }}"
+                      matInput
+                      placeholder="row.noOfAvailable"
+                      [(ngModel)]="ratesAndAvailability.noOfAvailable"
+                    />
+                  </mat-form-field>
+                </mat-cell>
+              </ng-container>
+              <ng-container matColumnDef="action">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>
+                  Action
+                </mat-header-cell>
+                <mat-cell *matCellDef="let row" data-label="Action">
+                  <span>
+                    <button
+                      mat-button
+                      color="primary"
+                      *ngIf="!editMode || !(selectedRow == row.id)"
+                      (click)="edit(row)"
+                    >
+                      <mat-icon>edit</mat-icon>
+                    </button>
+                    <button
+                      mat-button
+                      color="primary"
+                      *ngIf="editMode && selectedRow == row.id"
+                      (click)="save(ratesAndAvailability, row)"
+                    >
+                      <mat-icon>save</mat-icon>
+                    </button>
+                    <button
+                      mat-button
+                      color="warn"
+                      *ngIf="editMode && selectedRow == row.id"
+                      (click)="cancel()"
+                    >
+                      <mat-icon>cancel</mat-icon>
+                    </button>
+                  </span>
+                </mat-cell>
+              </ng-container>
+
+              <mat-header-row
+                *matHeaderRowDef="displayedColumns"
+              ></mat-header-row>
+              <mat-row *matRowDef="let row; columns: displayedColumns">
+              </mat-row>
+            </mat-table>
+          </div>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </div>
+  </mat-card-content>
+</mat-card>

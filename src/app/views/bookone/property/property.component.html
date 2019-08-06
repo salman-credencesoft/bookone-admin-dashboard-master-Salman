@@ -1,0 +1,280 @@
+<!--<mat-tab-group [selectedIndex]="selected.value"
+     (selectedIndexChange)="selected.setValue($event)">
+<mat-tab *ngFor="let tab of tabs; let index = index" [label]="tab"> -->
+<mat-progress-bar
+  *ngIf="loader"
+  color="warn"
+  mode="indeterminate"
+></mat-progress-bar>
+<mat-accordion class="example-headers-align">
+  <mat-expansion-panel [expanded]="step === 0" (opened)="setStep(0)" hideToggle>
+    <mat-expansion-panel-header>
+      <mat-panel-description fxLayoutAlign="center center">
+        Property Name, Contact Information
+      </mat-panel-description>
+      <mat-icon>contact_mail</mat-icon>
+    </mat-expansion-panel-header>
+    <div fxLayoutAlign.gt-xs="space-between start" fxLayout.xs="column">
+      <mat-form-field
+        fxFlex="100"
+        fxFlex.gt-xs="48.50"
+        color="primary"
+        appearance="outline"
+      >
+        <input
+          type="text"
+          matInput
+          placeholder="Name Of the Property"
+          [formControl]="name"
+          [(ngModel)]="data.name"
+          required
+        />
+        <mat-error *ngIf="!name.valid && name.touched"
+          >Property Name is required!</mat-error
+        >
+      </mat-form-field>
+      <mat-form-field
+        fxFlex="100"
+        fxFlex.gt-xs="48.50"
+        color="primary"
+        appearance="outline"
+      >
+        <input
+          type="email"
+          matInput
+          placeholder="Email"
+          [formControl]="email"
+          [(ngModel)]="data.email"
+          required
+        />
+        <mat-error *ngIf="!email.valid && email.touched"
+          >Email is required!</mat-error
+        >
+      </mat-form-field>
+    </div>
+    <div fxLayoutAlign.gt-xs="space-between start">
+      <mat-form-field
+        fxFlex="100"
+        fxFlex.gt-xs="80"
+        color="primary"
+        appearance="outline"
+      >
+        <input
+          type="text"
+          matInput
+          placeholder="Any Slogan/Sub Title"
+          [formControl]="slogan"
+          [(ngModel)]="data.slogan"
+        />
+      </mat-form-field>
+    </div>
+    <div>
+      <div fxLayoutAlign.gt-xs="space-between start" fxLayout.xs="column">
+        <mat-form-field
+          fxFlex="100"
+          fxFlex.gt-xs="48.50"
+          color="primary"
+          appearance="outline"
+        >
+          <input
+            type="tel"
+            matInput
+            placeholder="Landphone"
+            [formControl]="landphone"
+            [(ngModel)]="data.landphone"
+            required
+          />
+          <mat-error *ngIf="!landphone.valid && landphone.touched"
+            >Landphone is required!</mat-error
+          >
+        </mat-form-field>
+        <mat-form-field
+          fxFlex="100"
+          fxFlex.gt-xs="48.50"
+          color="primary"
+          appearance="outline"
+        >
+          <input
+            type="tel"
+            matInput
+            placeholder="Mobile"
+            [formControl]="mobile"
+            [(ngModel)]="data.mobile"
+            required
+          />
+          <mat-error *ngIf="!mobile.valid && mobile.touched"
+            >Mobile Number is required!</mat-error
+          >
+        </mat-form-field>
+      </div>
+    </div>
+    <mat-action-row>
+      <button mat-button color="primary" (click)="nextStep()">Next</button>
+    </mat-action-row>
+  </mat-expansion-panel>
+</mat-accordion>
+<!-- Propert Manager Details Section-->
+<mat-accordion class="example-headers-align">
+  <mat-expansion-panel [expanded]="step === 1" (opened)="setStep(1)" hideToggle>
+    <mat-expansion-panel-header>
+      <mat-panel-description fxLayoutAlign="center center">
+        Property Manager Details
+      </mat-panel-description>
+      <mat-icon>person</mat-icon>
+    </mat-expansion-panel-header>
+    <div>
+      <div fxLayoutAlign.gt-xs="space-between start" fxLayout.xs="column">
+        <mat-form-field fxFlex="100" fxFlex.gt-xs="48.50" color="primary">
+          <input
+            matInput
+            placeholder="Property Manager First Name"
+            [formControl]="managerFirstName"
+            [(ngModel)]="data.managerFirstName"
+            required
+          />
+          <mat-error *ngIf="!managerFirstName.valid && managerFirstName.touched"
+            >Manager's First Name is required!</mat-error
+          >
+        </mat-form-field>
+        <mat-form-field fxFlex="100" fxFlex.gt-xs="48.50" color="primary">
+          <input
+            matInput
+            placeholder="Property Manager Last Name"
+            [formControl]="managerLastName"
+            [(ngModel)]="data.managerLastName"
+            required
+          />
+          <mat-error *ngIf="!managerLastName.valid && managerLastName.touched"
+            >Manager's Last Name is required!</mat-error
+          >
+        </mat-form-field>
+      </div>
+    </div>
+    <div>
+      <div fxLayoutAlign.gt-xs="space-between start" fxLayout.xs="column">
+        <mat-form-field fxFlex="100" fxFlex.gt-xs="48.50" color="primary">
+          <input
+            matInput
+            placeholder="Manager's Contact Number"
+            [formControl]="managerContactNo"
+            [(ngModel)]="data.managerContactNo"
+          />
+        </mat-form-field>
+        <mat-form-field fxFlex="100" fxFlex.gt-xs="48.50" color="primary">
+          <input
+            matInput
+            placeholder="Manager's Email"
+            [formControl]="managerEmailAddress"
+            [(ngModel)]="data.managerEmailAddress"
+          />
+        </mat-form-field>
+      </div>
+    </div>
+    <mat-action-row>
+      <button mat-button color="accent" (click)="prevStep()">Previous</button>
+      <button mat-button color="primary" (click)="nextStep()">Next</button>
+    </mat-action-row>
+  </mat-expansion-panel>
+</mat-accordion>
+<!-- Address Details Section -->
+<mat-accordion class="example-headers-align">
+  <mat-expansion-panel [expanded]="step === 2" (opened)="setStep(2)" hideToggle>
+    <mat-expansion-panel-header>
+      <mat-panel-description fxLayoutAlign="center center"
+        >Address</mat-panel-description
+      >
+      <mat-icon>location_city</mat-icon>
+    </mat-expansion-panel-header>
+    <div fxLayoutAlign.gt-xs="space-between start" fxLayout.xs="column">
+      <mat-form-field fxFlex="100" fxFlex.gt-xs="48.50" color="primary">
+        <input
+          matInput
+          placeholder="Street Number"
+          [formControl]="streetNumber"
+          [(ngModel)]="data.address.streetNumber"
+          required
+        />
+        <mat-error *ngIf="!streetNumber.valid && streetNumber.touched"
+          >Street number is required!</mat-error
+        >
+      </mat-form-field>
+      <mat-form-field fxFlex="100" fxFlex.gt-xs="48.50" color="primary">
+        <input
+          matInput
+          placeholder="Street Name"
+          [formControl]="streetName"
+          [(ngModel)]="data.address.streetName"
+          required
+        />
+      </mat-form-field>
+    </div>
+    <div fxLayoutAlign.gt-xs="space-between start" fxLayout.xs="column">
+      <mat-form-field fxFlex="100" fxFlex.gt-xs="48.50" color="primary">
+        <input
+          matInput
+          placeholder="Suburb/Locality"
+          [formControl]="suburb"
+          [(ngModel)]="data.address.suburb"
+          required
+        />
+        <mat-error *ngIf="!suburb.valid && suburb.touched"
+          >Suburb is required!</mat-error
+        >
+      </mat-form-field>
+      <mat-form-field fxFlex="100" fxFlex.gt-xs="48.50" color="primary">
+        <input
+          matInput
+          placeholder="City/State"
+          [formControl]="city"
+          [(ngModel)]="data.address.city"
+          required
+        />
+        <mat-error *ngIf="!city.valid && city.touched"
+          >City is required!</mat-error
+        >
+      </mat-form-field>
+    </div>
+    <div fxLayoutAlign.gt-xs="space-between start" fxLayout.xs="column">
+      <mat-form-field fxFlex="100" fxFlex.gt-xs="48.50" color="primary">
+        <input
+          matInput
+          placeholder="Post Code"
+          [formControl]="postcode"
+          [(ngModel)]="data.address.postcode"
+        />
+      </mat-form-field>
+      <mat-form-field fxFlex="100" fxFlex.gt-xs="48.50" color="primary">
+        <input
+          matInput
+          placeholder="Country"
+          [formControl]="country"
+          [(ngModel)]="data.address.country"
+        />
+      </mat-form-field>
+    </div>
+    <mat-action-row>
+      <button mat-button color="accent" (click)="prevStep()">Previous</button>
+      <button mat-button color="primary" (click)="nextStep(); onSubmit()">
+        Done
+      </button>
+    </mat-action-row>
+  </mat-expansion-panel>
+</mat-accordion>
+<!--<div fxLayoutAlign.gt-xs="space-between start" fxLayout.xs="column">
+<button mat-raised-button
+  class="example-delete-tab-button"
+  [disabled]="tabs.length === 1"
+  mat-button color="primary"
+  (click)="removeCoApplicant(index)">
+Remove Co-Applicant
+</button>
+<button mat-raised-button
+      mat-button color="primary"
+      class="example-add-tab-button"
+      (click)="addCoApplicant(true)"
+      >
+Add Co-Applicant
+</button>
+</div>
+</mat-tab>
+</mat-tab-group> -->

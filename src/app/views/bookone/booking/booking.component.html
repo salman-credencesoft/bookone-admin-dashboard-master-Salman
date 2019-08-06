@@ -1,0 +1,582 @@
+<mat-dialog-content>
+  <div *ngIf="booking.id > 0">
+    <mat-chip-list>
+      <mat-chip color="primary" *ngIf="booking.payableAmount > 0" selected
+        >Room: ${{ booking.payableAmount }}</mat-chip
+      >
+      <mat-chip color="primary" *ngIf="booking.discountAmount > 0"
+        >Discount: ${{ booking.discountAmount }}</mat-chip
+      >
+      <mat-chip color="accent" *ngIf="booking.totalServiceAmount > 0" selected
+        >Services:{{ booking.totalServiceAmount }}</mat-chip
+      >
+      <mat-chip color="primary" *ngIf="booking.totalExpenseAmount > 0"
+        >Expenses:{{ booking.totalExpenseAmount }}</mat-chip
+      >
+      <mat-chip color="accent" *ngIf="booking.totalPaymentAmount > 0" selected
+        >Paid: ${{ booking.totalPaymentAmount }}</mat-chip
+      >
+      <mat-chip
+        color="primary"
+        selected
+        *ngIf="booking.outstandingAmount > 0"
+        selected
+        >Balance: ${{ booking.outstandingAmount }}</mat-chip
+      >
+      <mat-chip
+        color="warn"
+        selected
+        *ngIf="booking.outstandingAmount < 0"
+        selected
+        >Balance: ${{ booking.outstandingAmount }}</mat-chip
+      >
+      <mat-chip color="primary" (click)="close()"
+        ><mat-icon>close</mat-icon>close</mat-chip
+      >
+    </mat-chip-list>
+  </div>
+  <mat-tab-group dynamicHeight="true">
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <em>Booking</em>
+      </ng-template>
+      <mat-progress-bar *ngIf="loader" color="warn" mode="indeterminate"></mat-progress-bar>
+      <form (ngSubmit)="onSubmit()">
+        <mat-card fxFlex="100" fxFlex.gt-xs="100">
+          <mat-card-title>{{ pageTitle }}</mat-card-title>
+          <mat-card-content>
+            <div *ngFor="let msg of msgs">
+              <span
+                *ngIf="msg.summary"
+                class="error"
+                [innerHTML]="msg.summary"
+              ></span>
+              <span
+                *ngIf="msg.detail"
+                class="success"
+                [innerHTML]="msg.detail"
+              ></span>
+            </div>
+            <div  fxLayoutAlign.gt-xs="space-between start" fxLayout.xs="column">
+              <mat-form-field
+              fxFlex="100"
+              fxFlex.gt-xs="100"
+              color="primary"
+              appearance="outline"
+            >
+              <mat-select
+                placeholder="Choose Room"
+                class="form-control"
+                [formControl]="roomType"
+                [(ngModel)]="booking.roomId"
+                (selectionChange)="setRoom(booking.roomId)"
+              >
+                <mat-option
+                  *ngFor="let room of rooms"
+                  [value]="room.id" 
+                >
+                <p><b> {{ room.name }} </b><span style="color:blueviolet"> Price: {{room.minimumOccupancy}} people ${{room.roomOnlyPrice}}/Night - Extra Person/Night:${{room.extraChargePerPerson}}
+                  - Weekly: ${{room.pricePerWeek}} - Monthly: ${{room.priceMonthly}}</span></p>
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+            </div>
+            <div fxLayoutAlign.gt-xs="space-between start" fxLayout.xs="column">
+              <mat-form-field
+                fxFlex="100"
+                fxFlex.gt-xs="48.50"
+                appearance="outline"
+              >
+                <input
+                  matInput
+                  [matDatepicker]="fromdate"
+                  placeholder="Check-In"
+                  [formControl]="bookingFromDate"
+                  [(ngModel)]="booking.fromDate"
+                  (dateInput)="setCheckOutDate('input', $event)"
+                  (dateChange)="setCheckOutDate('change', $event)"
+                  required
+                />
+                <mat-error
+                  *ngIf="!bookingFromDate.valid && bookingFromDate.touched"
+                  >Check-In date required</mat-error
+                >
+                <mat-datepicker-toggle matSuffix [for]="fromdate">
+                  <mat-icon matDatepickerToggleIcon>input</mat-icon>
+                </mat-datepicker-toggle>
+                <mat-datepicker #fromdate color="primary"></mat-datepicker>
+              </mat-form-field>
+              <mat-form-field
+                fxFlex="100"
+                fxFlex.gt-xs="48.50"
+                appearance="outline"
+              >
+                <input
+                  matInput
+                  [matDatepicker]="todate"
+                  placeholder="Check-Out"
+                  [formControl]="bookingToDate"
+                  [(ngModel)]="booking.toDate"
+                  [min]="minToDate"
+                  [max]="maxToDate"
+                  required
+                />
+                <mat-error *ngIf="!bookingToDate.valid && bookingToDate.touched"
+                  >Check-Out date required</mat-error
+                >
+                <mat-datepicker-toggle matSuffix [for]="todate">
+                  <mat-icon matDatepickerToggleIcon>input</mat-icon>
+                </mat-datepicker-toggle>
+                <mat-datepicker #todate color="primary"></mat-datepicker>
+              </mat-form-field>
+            </div>
+        
+            <div  
+              fxLayoutAlign.gt-xs="space-between start"
+              fxLayout.xs="column"
+              *ngIf="room"
+            >
+            <mat-form-field
+                fxFlex="100"
+                fxFlex.gt-xs="48.50"
+                appearance="outline"
+              >
+                <input
+                  type="number"
+                  matInput
+                  placeholder="{{noOfRoomsPlaceHolder}}"
+                  [formControl]="noOfRooms"
+                  [(ngModel)]="booking.noOfRooms"
+                  min="1"
+                  max="{{ room.noOfRooms }}"
+                  required
+                />
+                <mat-error *ngIf="!noOfRooms.valid && noOfRooms.touched"
+                  >{{noOfRoomsPlaceHolder}} required!</mat-error
+                >
+                <mat-hint>"{{noOfRoomsPlaceHolder}}"</mat-hint>
+              </mat-form-field>
+              <mat-form-field
+                fxFlex="100"
+                fxFlex.gt-xs="48.50"
+                appearance="outline"
+              >
+                <input
+                  type="number"
+                  matInput
+                  placeholder="No Of Person(s)"
+                  [formControl]="noOfPersons"
+                  [(ngModel)]="booking.noOfPersons"
+                  min="1"
+                  max="{{ room.maximumOccupancy*booking.noOfRooms }}"
+                  required
+                />
+                <mat-error *ngIf="!noOfPersons.valid && noOfPersons.touched"
+                  >No Of Person Required!</mat-error
+                >
+                <mat-hint>No Of Persons above 5 years</mat-hint>
+              </mat-form-field>
+              
+            </div>
+
+          <!--First Name & Last Name-->
+
+            <div *ngIf="availabilityCheck === true || booking.id > 0">
+              <div
+                fxLayoutAlign.gt-xs="space-between start"
+                fxLayout.xs="column"
+              >
+                <mat-form-field
+                  fxFlex="100"
+                  fxFlex.gt-xs="48.50"
+                  appearance="outline"
+                >
+                  <input
+                    type="text"
+                    matInput
+                    placeholder="First Name"
+                    [formControl]="firstName"
+                    [(ngModel)]="booking.firstName"
+                    required
+                  />
+                  <mat-error *ngIf="!firstName.valid && firstName.touched"
+                    >First Name is required</mat-error
+                  >
+                  <mat-hint>First Name of the Guest.</mat-hint>
+                </mat-form-field>
+                <mat-form-field
+                  fxFlex="100"
+                  fxFlex.gt-xs="48.50"
+                  appearance="outline"
+                >
+                  <input
+                    type="text"
+                    matInput
+                    placeholder="Last Name"
+                    [formControl]="lastName"
+                    [(ngModel)]="booking.lastName"
+                    required
+                  />
+                  <mat-error *ngIf="!lastName.valid && lastName.touched"
+                    >Last Name is required</mat-error
+                  >
+                  <mat-hint>Last Name of the Guest.</mat-hint>
+                </mat-form-field>
+              </div>
+            </div>
+            <div *ngIf="availabilityCheck === true || booking.id > 0">
+              <div
+                fxLayoutAlign.gt-xs="space-between start"
+                fxLayout.xs="column"
+              >
+                <mat-form-field
+                  fxFlex="100"
+                  fxFlex.gt-xs="48.50"
+                  appearance="outline"
+                >
+                  <input
+                    type="email"
+                    matInput
+                    placeholder="Email"
+                    [formControl]="bookingEmail"
+                    [(ngModel)]="booking.email"
+                    required
+                  />
+                  <mat-error *ngIf="!bookingEmail.valid && bookingEmail.touched"
+                    >Invalid Email Address!</mat-error
+                  >
+                  <mat-hint
+                    >Guest's email if not avaialable then use your
+                    own.</mat-hint
+                  >
+                </mat-form-field>
+                <mat-form-field
+                  fxFlex="100"
+                  fxFlex.gt-xs="48.50"
+                  appearance="outline"
+                >
+                  <input
+                    type="text"
+                    matInput
+                    placeholder="Contact Number"
+                    minlength="9"
+                    maxlength="14"
+                    pattern="[0-9]"
+                    [formControl]="bookingContact"
+                    [(ngModel)]="booking.mobile"
+                    required
+                  />
+                  <mat-error
+                    *ngIf="!bookingContact.valid && bookingContact.touched"
+                    >Invalid Contact Number !</mat-error
+                  >
+                  <mat-error *ngIf="bookingContact.minlength"
+                    >Invalid Contact Number !</mat-error
+                  >
+                  <mat-error *ngIf="bookingContact.maxlength"
+                    >Invalid Contact Number !</mat-error
+                  >
+                  <mat-hint
+                    >Mention the country code for Overseas Number.</mat-hint
+                  >
+                </mat-form-field>
+              </div>
+            </div>
+            <div *ngIf="availabilityCheck === true || booking.id > 0">
+              <div
+                fxLayoutAlign.gt-xs="space-between start"
+                fxLayout.xs="column"
+              >
+                <mat-form-field
+                  fxFlex="100"
+                  fxFlex.gt-xs="48.50"
+                  appearance="outline"
+                >
+                  <input
+                    type="text"
+                    matInput
+                    placeholder="External Booking Number"
+                    [formControl]="externalBookingRef"
+                    [(ngModel)]="booking.externalBookingID"
+                  />
+                  <mat-hint
+                    >Booking Reference Number of ThirdParty Sites.</mat-hint
+                  >
+                </mat-form-field>
+                <mat-form-field
+                  fxFlex="100"
+                  fxFlex.gt-xs="48.50"
+                  appearance="outline"
+                >
+                  <mat-select
+                    placeholder="External Booking Sites"
+                    [(ngModel)]="booking.externalSite"
+                    [formControl]="externalSite"
+                    >x
+                    <mat-option
+                      *ngFor="let externalSite of externalBookingSites"
+                      [value]="externalSite.value"
+                    >
+                      {{ externalSite.viewValue }}
+                    </mat-option>
+                  </mat-select>
+                  <mat-hint>External Sites such as Booking.com.</mat-hint>
+                </mat-form-field>
+              </div>
+            </div>
+            <div *ngIf="availabilityCheck === true || booking.id > 0">
+              <div
+                fxLayoutAlign.gt-xs="space-between start"
+                fxLayout.xs="column"
+              >
+                <mat-form-field
+                  fxFlex="100"
+                  fxFlex.gt-xs="100"
+                  appearance="outline"
+                >
+                  <textarea
+                    matInput
+                    placeholder="Booking Notes"
+                    [formControl]="bookingNotes"
+                    [(ngModel)]="booking.notes"
+                  ></textarea>
+                  <mat-hint>** Any Special Request </mat-hint>
+                </mat-form-field>
+              </div>
+            </div>
+
+            <div *ngIf="booking.available === true">
+              <div
+                fxLayoutAlign.gt-xs="space-between start"
+                fxLayout.xs="column"
+              >
+                <mat-form-field
+                  fxFlex="100"
+                  fxFlex.gt-xs="48.50"
+                  appearance="outline"
+                >
+                  <mat-select
+                    placeholder="Mode of Payment"
+                    [(ngModel)]="booking.modeOfPayment"
+                    [formControl]="paymentMode"
+                    required
+                  >
+                    <mat-option
+                      *ngFor="let paymentMode of paymentModes"
+                      [value]="paymentMode.value"
+                    >
+                      {{ paymentMode.viewValue }}
+                    </mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="!paymentMode.valid && paymentMode.touched"
+                    >Payment mode is required!</mat-error
+                  >
+                </mat-form-field>
+                <mat-form-field
+                  fxFlex="100"
+                  fxFlex.gt-xs="48.50"
+                  appearance="outline"
+                >
+                  <span matPrefix>$ &nbsp;</span>
+                  <input
+                    type="text"
+                    matInput
+                    placeholder="Booking Amount"
+                    [formControl]="bookingAmount"
+                    [(ngModel)]="booking.payableAmount"
+                  />
+                </mat-form-field>
+              </div>
+            </div>
+            <div *ngIf="booking.modeOfPayment == 'Card' && !(booking.id > 0)">
+              <div
+                fxLayoutAlign.gt-xs="space-between start"
+                fxLayout.xs="column"
+                appearance="outline"
+              >
+                <mat-form-field
+                  fxFlex="100"
+                  color="primary"
+                  fxFlex.gt-xs="48.50"
+                >
+                  <input
+                    type="text"
+                    matInput
+                    placeholder="Card Number"
+                    minlength="16"
+                    maxlength="16"
+                    pattern="[0-9]{16}"
+                    [formControl]="cardNumber"
+                    [(ngModel)]="payment.cardNumber"
+                    required
+                  />
+                  <mat-error *ngIf="!cardNumber.valid && cardNumber.touched"
+                    >Invalid Card Number!</mat-error
+                  >
+                  <mat-error *ngIf="cardNumber.minlength"
+                    >Card Number must be 16 digits !</mat-error
+                  >
+                  <mat-error *ngIf="cardNumber.maxlength"
+                    >Card Number must be 16 digits !</mat-error
+                  >
+                </mat-form-field>
+                <mat-form-field
+                  fxFlex="100"
+                  fxFlex.gt-xs="48.50"
+                  appearance="outline"
+                >
+                  <input
+                    type="text"
+                    matInput
+                    placeholder="Name On Card"
+                    [formControl]="cardHolderName"
+                    [(ngModel)]="payment.cardHolderName"
+                    required
+                  />
+                  <mat-hint>16 Digit Master/Visa Card Number.</mat-hint>
+                  <mat-error
+                    *ngIf="!cardHolderName.valid && cardHolderName.touched"
+                    >Cardholder Name is required!</mat-error
+                  >
+                </mat-form-field>
+              </div>
+            </div>
+            <div *ngIf="booking.modeOfPayment == 'Card'">
+              <div
+                fxLayoutAlign.gt-xs="space-between start"
+                fxLayout.xs="column"
+              >
+                <mat-form-field
+                  fxFlex="100"
+                  fxFlex.gt-xs="38"
+                  appearance="outline"
+                >
+                  <mat-select
+                    placeholder="Expiration Month"
+                    [(ngModel)]="payment.expMonth"
+                    [formControl]="expMonth"
+                  >
+                    <mat-option
+                      *ngFor="let month of months"
+                      [value]="month.value"
+                    >
+                      {{ month.viewValue }}
+                    </mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="!expMonth.valid && expMonth.touched"
+                    >Card Expiration Month is required!</mat-error
+                  >
+                </mat-form-field>
+                <mat-form-field
+                  fxFlex="100"
+                  fxFlex.gt-xs="38"
+                  appearance="outline"
+                >
+                  <mat-select
+                    placeholder="Expiration Year"
+                    [(ngModel)]="payment.expYear"
+                    [formControl]="expYear"
+                    required
+                  >
+                    <mat-option *ngFor="let year of years" [value]="year.value">
+                      {{ year.viewValue }}
+                    </mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="!expYear.valid && expYear.touched"
+                    >Card Expiration Year is required!</mat-error
+                  >
+                </mat-form-field>
+                <mat-form-field
+                  fxFlex="100"
+                  fxFlex.gt-xs="18"
+                  appearance="outline"
+                >
+                  <input
+                    type="text"
+                    minlength="3"
+                    maxlength="3"
+                    matInput
+                    placeholder="CVV"
+                    [formControl]="cvv"
+                    pattern="[0-9]{3}"
+                    [(ngModel)]="payment.cvv"
+                    required
+                  />
+                  <mat-hint>Three Digit Number back of the Card.</mat-hint>
+                  <mat-error *ngIf="!cvv.valid && cvv.touched"
+                    >Invalid CVV!</mat-error
+                  >
+                  <mat-error *ngIf="cvv.minlength || cvv.maxlength"
+                    >CVV must be of 3 digits !</mat-error
+                  >
+                </mat-form-field>
+              </div>
+            </div>
+          </mat-card-content>
+          <mat-card-actions>
+            <button
+              mat-raised-button
+              type="button"
+              (click)="submit()"
+              color="primary"
+              [disabled]="loader"
+            >
+              {{ bookingButtonLabel }}
+            </button>
+            &nbsp;&nbsp;
+            <button
+              mat-raised-button
+              type="button"
+              (click)="reset()"
+              color="primary"
+              [disabled]="loader"
+            >
+              {{ resetButtonLabel }}
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      </form>
+    </mat-tab>
+    <mat-tab *ngIf="booking.id > 0">
+      <ng-template mat-tab-label>
+        <em>Payments</em>
+      </ng-template>
+      <div>
+        <button
+          mat-icon-button
+          color="primary"
+          focusable="false"
+          (click)="createPaymentDialog()"
+        >
+          <mat-icon>add</mat-icon><em>New Payment</em>
+        </button>
+      </div>
+      <app-manage-payment [booking]="booking"></app-manage-payment>
+    </mat-tab>
+    <mat-tab *ngIf="booking.id > 0">
+      <ng-template mat-tab-label>
+        <em>Services</em>
+      </ng-template>
+      <!--app-expense [booking]="booking"></app-expense-->
+      <app-service [booking]="booking"></app-service>
+    </mat-tab>
+    <mat-tab *ngIf="booking.id > 0">
+      <ng-template mat-tab-label>
+        <em>Expenses</em>
+      </ng-template>
+      <div>
+        <button
+          mat-icon-button
+          color="primary"
+          focusable="false"
+          (click)="createExpenseDialog()"
+        >
+          <mat-icon>add</mat-icon><em>New Expense</em>
+        </button>
+      </div>
+      <app-manage-expense [booking]="booking"></app-manage-expense>
+    </mat-tab>
+  </mat-tab-group>
+  <!--mat-dialog-actions>
+  </mat-dialog-actions-->
+</mat-dialog-content>

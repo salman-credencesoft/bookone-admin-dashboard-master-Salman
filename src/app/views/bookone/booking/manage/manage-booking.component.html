@@ -1,0 +1,314 @@
+<!--app-main-nav></app-main-nav-->
+<mat-progress-bar *ngIf="loader" color="warn" mode="indeterminate"></mat-progress-bar>
+<mat-card>
+  <mat-card-content>
+        <div fxLayout="cloumn"  fxLayoutAlign.gt-xs="space-between start" fxLayout.xs="column" fxLayoutAlign="space-evenly center">
+      <button mat-icon-button color="primary" focusable="false" (click)="createBookingDialog()">
+        <mat-icon>add_circle</mat-icon>Book A Room
+      </button>
+      <button mat-icon-button color="primary" focusable="false" (click)="getGuestsCheckingInToday()">
+        <mat-icon>arrow_forward</mat-icon>Checking In
+      </button>
+      <button mat-icon-button color="primary" focusable="false" (click)=" getGuestsCheckingOutToday()">
+        <mat-icon>arrow_downward</mat-icon>In House
+      </button>
+      <button mat-icon-button color="primary" focusable="false" (click)="getGuestsInHouseToday()">
+        <mat-icon>arrow_back</mat-icon>Checking Out
+      </button>
+      <button mat-icon-button color="primary">
+        
+        </button>
+  </div>
+    <div fxLayout="column">
+      <div fxLayoutAlign.gt-xs="space-between start" fxLayout.xs="column">
+        <mat-form-field fxFlex="100" fxFlex.gt-xs="48.50" appearance="outline">
+          <input matInput [matDatepicker]="fromdate" placeholder="Check-In" [formControl]="bookingFromDate"   [(ngModel)]="booking.fromDate"
+             />
+          <mat-datepicker-toggle matSuffix [for]="fromdate">
+            <mat-icon matDatepickerToggleIcon>input</mat-icon>
+          </mat-datepicker-toggle>
+          <mat-datepicker #fromdate color="primary"></mat-datepicker>
+        </mat-form-field>
+        <mat-form-field fxFlex="100" fxFlex.gt-xs="48.50" appearance="outline">
+          <input matInput [matDatepicker]="todate" placeholder="Check-Out" [formControl]="bookingToDate" [(ngModel)]="booking.toDate" />
+          <mat-datepicker-toggle matSuffix [for]="todate">
+            <mat-icon matDatepickerToggleIcon>input</mat-icon>
+          </mat-datepicker-toggle>
+          <mat-datepicker #todate color="primary"></mat-datepicker>
+        </mat-form-field>
+      </div>
+      <div fxLayout="column">
+        <div fxLayoutAlign.gt-xs="space-between start" fxLayout.xs="column">
+          <mat-form-field fxFlex="100" fxFlex.gt-xs="48.50" appearance="outline">
+            <input type="text" matInput placeholder="First Name" [formControl]="firstName" [(ngModel)]="booking.firstName"
+              />
+            <mat-hint>First Name of the Guest.</mat-hint>
+          </mat-form-field>
+          <mat-form-field fxFlex="100" fxFlex.gt-xs="48.50" appearance="outline">
+            <input type="text" matInput placeholder="Last Name" [formControl]="lastName" [(ngModel)]="booking.lastName"
+              />
+            <mat-hint>Last Name of the Guest.</mat-hint>
+          </mat-form-field>
+        </div>
+      </div>
+      <div fxLayout="column">
+        <div fxLayoutAlign.gt-xs="space-between start" fxLayout.xs="column">
+          <mat-form-field fxFlex="100" fxFlex.gt-xs="48.50" appearance="outline">
+            <input type="email" matInput placeholder="Email" [formControl]="bookingEmail" [(ngModel)]="booking.email"
+              required />
+          </mat-form-field>
+          <mat-form-field fxFlex="100" fxFlex.gt-xs="48.50" appearance="outline">
+            <input type="text" matInput placeholder="Contact Number" [formControl]="bookingContact" [(ngModel)]="booking.mobile"  />
+          </mat-form-field>
+        </div>
+      </div>
+      <div fxLayout="row"  fxLayoutAlign.gt-xs="space-between start" fxLayout.xs="column" fxLayoutAlign="space-between start">
+        <button mat-icon-button color="primary" [disabled]="enableDisableFindBookings()" focusable="true" (click)="findBookings()">
+          <mat-icon>find_in_page</mat-icon> Find Bookings
+        </button>
+        <button mat-icon-button color="primary"  focusable="true" [disabled]="enableDisableFindBookings()" (click)="searchReset()">
+            <mat-icon>clear</mat-icon> Reset
+          </button>
+          <button mat-icon-button color="primary" focusable="false" (click)="refresh()">
+              <mat-icon>refresh</mat-icon> Refresh Bookings
+            </button>
+            <button mat-icon-button color="primary" >
+              </button>
+      </div>
+
+      <div fxLayout="row" fxLayoutAlign="start stretch">
+        <mat-form-field appearance="legacy" color="primary">
+          <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter" />
+        </mat-form-field>
+      </div>
+      <div fxFlex="100">
+
+        <table mat-table [dataSource]="dataSource" multiTemplateDataRows class="mat-elevation-z8">
+          <!-- ID Column -->
+
+          <ng-container matColumnDef="bookingId">
+            <th mat-header-cell *matHeaderCellDef>
+              <h3 style="color:rgb(0, 0, 0);">ID</h3>
+            </th>
+            <td mat-cell *matCellDef="let row" data-label="id">
+              {{ row.id }}
+            </td>
+          </ng-container>
+
+          <!-- Check-in Column -->
+          <ng-container matColumnDef="checkin">
+            <th mat-header-cell *matHeaderCellDef>
+              <h3 style="color:rgb(0, 0, 0);">Check-In</h3>
+            </th>
+            <td mat-cell *matCellDef="let row" data-label="fromDate">
+              {{ row.fromDate }}
+            </td>
+          </ng-container>
+
+          <!-- Check-out Column -->
+          <ng-container matColumnDef="checkout">
+            <th mat-header-cell *matHeaderCellDef>
+              <h3 style="color:rgb(0, 0, 0);">Check-Out</h3>
+            </th>
+            <td mat-cell *matCellDef="let row" data-label="toDate">
+              {{ row.toDate }}
+            </td>
+          </ng-container>
+          <!-- Guest Name Column -->
+          <ng-container matColumnDef="guestName">
+            <th mat-header-cell *matHeaderCellDef>
+              <h3 style="color:rgb(0, 0, 0);">Name</h3>
+            </th>
+            <td mat-cell *matCellDef="let row" data-label="firstName">
+              {{ row.firstName }}
+            </td>
+          </ng-container>
+
+          <!-- Status  Column -->
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef>
+              <h3 style="color:rgb(0, 0, 0);">Status</h3>
+            </th>
+            <td mat-cell *matCellDef="let row" data-label="bookingStatus">
+              {{ row.bookingStatus }}
+            </td>
+          </ng-container>
+
+          <!-- edit delete button  Column -->
+          <ng-container matColumnDef="action">
+            <th mat-header-cell *matHeaderCellDef>
+              <h3 style="color:rgb(0, 0, 0);">Action</h3>
+            </th>
+            <td mat-cell *matCellDef="let row">
+              <button mat-icon-button [matMenuTriggerFor]="taskOptions" class="task__options">
+                <mat-icon>more_vert</mat-icon>
+              </button>
+
+              <mat-menu #taskOptions="matMenu">
+                <button mat-menu-item *ngIf="
+                  row.bookingStatus !== 'CANCELLED' ||
+                  row.bookingStatus == 'CHECKEDOUT' 
+                "
+                  (click)="modifyBooking(row,'noOfGuest')" color="warn">
+                  <mat-icon>person_add</mat-icon><span>Add/Remove Guest</span>
+                </button>
+                <button mat-menu-item *ngIf="
+                      row.bookingStatus == 'CONFIRMED' ||
+                      row.bookingStatus == 'NEW'
+                    "
+                  (click)="cancel(row)" color="warn">
+                  <mat-icon>cancel</mat-icon><span>Cancel</span>
+                </button>
+                <button mat-menu-item *ngIf="row.bookingStatus == 'CONFIRMED'" (click)="checkin(row)" color="primary">
+                  <mat-icon>input</mat-icon><span>CheckIn</span>
+                </button>
+                <button mat-menu-item *ngIf="row.bookingStatus == 'CHECKEDIN'" (click)="checkout(row)" color="warn">
+                  <mat-icon>checkout</mat-icon><span>CheckOut</span>
+                </button>
+
+                <button mat-menu-item (click)="copyBooking(row)" color="warn">
+                  <mat-icon>file_copy</mat-icon><span>Copy</span>
+                </button>
+                <button mat-menu-item *ngIf="
+                      row.bookingStatus !== 'CANCELLED' ||
+                      row.bookingStatus == 'CHECKEDOUT' 
+                    "
+                  (click)="modifyBooking(row,'date')" color="warn">
+                  <mat-icon>calendar_today</mat-icon><span>Date Change</span>
+                </button>
+
+                <button mat-menu-item *ngIf="row.id" (click)="updateBookingDialog(row)" color="primary">
+                  <mat-icon>edit</mat-icon><span>Details</span>
+                </button>
+                <button mat-menu-item *ngIf="
+                    row.bookingStatus !== 'CANCELLED' ||
+                    row.bookingStatus == 'CHECKEDOUT' 
+                  "
+                  (click)="modifyBooking(row,'room')" color="warn">
+                  <mat-icon>room</mat-icon><span>Room Change</span>
+                </button>
+                <button mat-menu-item *ngIf="row.invoiceUrl" (click)="downloadInvoice(row.invoiceUrl)" color="primary">
+                  <mat-icon>cloud_download</mat-icon><span>Invoice</span>
+                </button>
+                <button mat-menu-item *ngIf="
+                      row.bookingStatus == 'CONFIRMED' ||
+                      row.bookingStatus == 'NEW'
+                    "
+                  (click)="sendPaymentLink(row)" color="primary">
+                  <mat-icon>link</mat-icon><span>Send Payment Link</span>
+                </button>
+              </mat-menu>
+            </td>
+          </ng-container>
+
+          <!-- Expanded row details -->
+          <ng-container matColumnDef="expandedDetail">
+            <td mat-cell *matCellDef="let row" [attr.colspan]="displayedColumns.length">
+              <div [@detailExpand]="
+                  row == expandedElement ? 'expanded' : 'collapsed'
+                ">
+                <mat-card>
+                  <mat-card-content>
+                    <div class="grid__system" fxLayout.xs="column" fxLayout.md="row" fxLayout.lg="row">
+                      <!-- external site logo  -->
+                      <div fxFlex="34" fxFlex.xs="100" class="grid__system" fxLayout="column">
+                        <mat-card-subtitle class="mb-0">
+                          <div class="external-site" *ngIf="row.externalSite">
+                            <p style="color:rgb(15, 51, 182);">
+                              Booking Site :<a style="color:rgb(182, 68, 15);"> {{ row.externalSite }}</a>
+                            </p>
+                            <img src="assets/images/sortlogo/{{
+                                row.externalSite
+                              }}.png"
+                              height="100" width="100" />
+                          </div>
+                          <div class="external-site" *ngIf="!row.externalSite">
+                            <p style="color:rgb(15, 51, 182);">
+                              Booking Site : BookOne
+                            </p>
+                            <img src="assets/images/sortlogo/BookOne.png" height="100" width="100" />
+                          </div>
+                        </mat-card-subtitle>
+
+                        <br />
+                        <p style="color:rgb(15, 51, 182);">
+                          Rsvn# : &nbsp;
+                          <a style="color:rgb(182, 68, 15);">{{ row.id }}</a>
+                          &nbsp; &nbsp; &nbsp; Extn Rsvn# : &nbsp;
+                          <a style="color:rgb(182, 68, 15);"> {{ row.externalBookingID }}</a> <br>
+                          Room : &nbsp; <a style="color:rgb(182, 68, 15);">{{ row.roomName }}</a>
+                          &nbsp; &nbsp; &nbsp;Room Number: &nbsp;<a style="color:rgb(182, 68, 15);"><span *ngFor="let room of row.roomDetails">
+                              &nbsp;
+                              {{ room.roomNumber }}
+                            </span>
+                          </a>
+                        </p>
+                        <p class="materialicontext">
+                          <i class="material-icons" matBadgeColor="warn" matTooltip="Mobile">contact_phone</i>
+                          :
+                          <a style="color:rgb(182, 68, 15);"> {{ row.mobile }}</a>
+                        </p>
+                        <br />
+                        <p class="materialicontext">
+                          <i class="material-icons" matBadgeColor="warn" matTooltip="Mobile">contact_mail</i>
+                          :
+                          <a style="color:rgb(182, 68, 15);">{{ row.email }}</a>
+                        </p>
+                        <br />
+                        <br />
+                      </div>
+
+                      <div fxFlex="33" fxFlex.xs="100" fxLayoutAlign="center center">
+                        <i class="material-icons" matBadge="{{ row.noOfPersons }}" matBadgeColor="warn" matTooltip="No. of person">supervised_user_circle</i>
+                        &nbsp; &nbsp; &nbsp;
+
+                        <i class="material-icons" matBadge="{{ row.noOfRooms }}" matBadgeColor="warn" matTooltip="No. of hotel rooms">hotel</i>
+                        &nbsp; &nbsp; &nbsp;
+
+                        <!--i class="material-icons" matTooltip="Paid by card"
+                          >credit_card</i
+                        >
+                        &nbsp; &nbsp; &nbsp;
+
+                        <i class="material-icons" matTooltip="Paid by cash"
+                          >money</i
+                        -->
+                        &nbsp; &nbsp; &nbsp;
+
+                        <i class="material-icons" matTooltip="Booking Amount:{{row.payableAmount}}">account_balance</i>
+                        &nbsp; &nbsp; &nbsp;
+
+                        <i class="material-icons" matTooltip="No. of extra person" matBadge="{{row.noOfExtraPerson}}"
+                          matBadgeColor="warn">person_add</i>
+                        &nbsp; &nbsp; &nbsp;&nbsp;
+                        <i class="material-icons" matTooltip="{{ row.notes }}" matBadge="i" matBadgeColor="warn">message</i>
+                      </div>
+
+                      <br />
+                      <br />
+                      <div fxFlex="33" class="grid__system" fxLayout="column" fxFlex.xs="100">
+                        <a style="color:rgb(15, 51, 182);"> Created Date :<a style="color:rgb(182, 68, 15);">{{
+                            row.createdDate }}</a></a>
+                        <a style="color:rgb(15, 51, 182);"> Last Updated Date:<a style="color:rgb(182, 68, 15);">{{
+                            row.lastModifiedDate }}</a></a>
+
+                        <br />
+                      </div>
+                    </div>
+                  </mat-card-content>
+                </mat-card>
+              </div>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns" class="example-element-row"
+            [class.example-expanded-row]="expandedElement === row" (click)="expandedElement = expandedElement === row ? null : row"></tr>
+          <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
+        </table>
+
+        <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>

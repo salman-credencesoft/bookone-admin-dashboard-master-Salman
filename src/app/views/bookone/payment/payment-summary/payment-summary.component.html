@@ -1,0 +1,72 @@
+<mat-progress-bar
+  *ngIf="loader"
+  color="warn"
+  mode="indeterminate"
+></mat-progress-bar>
+<mat-card fxFlex="100" fxFlex.gt-xs="100">
+  <mat-card-title
+    >Total Payment: &nbsp;&nbsp;${{
+      getTotalPayment() | number: ".2-2"
+    }}</mat-card-title
+  >
+  <mat-card-content [style.overflow]="'auto'" [style.height.px]="'200'">
+    <mat-table [dataSource]="dataSource" matSort>
+      <!-- Mode of Payment Column -->
+      <ng-container matColumnDef="mode">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>
+          <h3 style="color:rgb(0, 0, 0);">Payment Mode</h3>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let row" data-label="type">
+          {{ row.mode }}
+        </mat-cell>
+        <!--mat-footer-cell *matFooterCellDef>Total</mat-footer-cell-->
+      </ng-container>
+      <!-- Amount Column -->
+      <ng-container matColumnDef="amount">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>
+          <h3 style="color:rgb(0, 0, 0);">Amount</h3>
+        </mat-header-cell>
+        <mat-cell
+          *matCellDef="let row"
+          [style.color]="row.color"
+          data-label="amount"
+        >
+          {{ row.amount }}
+        </mat-cell>
+        <!--mat-footer-cell *matFooterCellDef>Test</mat-footer-cell-->
+      </ng-container>
+      <!-- Status Column -->
+      <ng-container matColumnDef="status">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>
+          <h3 style="color:rgb(0, 0, 0);">Status</h3>
+        </mat-header-cell>
+        <mat-cell
+          *matCellDef="let row"
+          [style.color]="row.color"
+          data-label="status"
+        >
+          {{ row.status }}
+        </mat-cell>
+        <!--mat-footer-cell *matFooterCellDef>Test</mat-footer-cell-->
+      </ng-container>
+      <!-- Count Column -->
+      <ng-container matColumnDef="count">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>
+          <h3 style="color:rgb(0, 0, 0);">Total Count</h3>
+        </mat-header-cell>
+        <mat-cell
+          *matCellDef="let row"
+          [style.color]="row.color"
+          data-label="count"
+        >
+          {{ row.count }}
+        </mat-cell>
+        <!--mat-footer-cell *matFooterCellDef>Test</mat-footer-cell-->
+      </ng-container>
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+
+      <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+      <!--mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row-->
+    </mat-table>
+  </mat-card-content>
+</mat-card>

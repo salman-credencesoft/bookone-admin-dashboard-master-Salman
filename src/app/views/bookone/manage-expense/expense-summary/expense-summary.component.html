@@ -1,0 +1,40 @@
+<mat-card fxFlex="100" fxFlex.gt-xs="100">
+  <mat-card-title
+    >Total Expense: &nbsp;&nbsp;${{
+      getTotalExpense() | number: ".2-2"
+    }}</mat-card-title
+  >
+
+  <mat-card-content [style.overflow]="'auto'" [style.height.px]="'300'">
+    <mat-table [dataSource]="dataSource" matSort>
+      <!-- Name Column -->
+      <ng-container matColumnDef="type">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>
+          <h3 style="color:rgb(0, 0, 0);">Expense Type</h3>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let row" data-label="type">
+          {{ row.name }}
+        </mat-cell>
+        <!--mat-footer-cell *matFooterCellDef>Total</mat-footer-cell-->
+      </ng-container>
+      <!-- Amount Column -->
+      <ng-container matColumnDef="amount">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>
+          <h3 style="color:rgb(0, 0, 0);">Amount</h3>
+        </mat-header-cell>
+        <mat-cell
+          *matCellDef="let row"
+          [style.color]="row.color"
+          data-label="amount"
+        >
+          {{ row.amount }}
+        </mat-cell>
+        <!--mat-footer-cell *matFooterCellDef>Test</mat-footer-cell-->
+      </ng-container>
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+
+      <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+      <!--mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row-->
+    </mat-table>
+  </mat-card-content>
+</mat-card>

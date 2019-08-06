@@ -1,0 +1,7 @@
+<mat-grid-list cols="5" rowHeight="10em" fxFlex="100%" fxFlex.gt-sm="100%" class="default">
+    <mat-grid-tile *ngFor="let room of rooms">
+        <mat-grid-tile-header>Room:{{room.roomNumber}}</mat-grid-tile-header>
+        <span *ngIf="room.bookingId>0" style="color:white"> Booking#{{room.bookingId}} </span>
+        <mat-grid-tile-footer>{{room.guestName}}</mat-grid-tile-footer>
+    </mat-grid-tile>
+  </mat-grid-list>

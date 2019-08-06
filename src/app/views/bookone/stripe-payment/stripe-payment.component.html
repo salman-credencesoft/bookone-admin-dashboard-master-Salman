@@ -1,0 +1,91 @@
+<app-loader-dialog [showLoader]="loader"></app-loader-dialog>
+<mat-card fxFlex="100" fxFlex.gt-xs="70.00">
+   <mat-card-title>Transaction Details</mat-card-title>
+   <mat-card-content>
+<div>
+    <div fxLayoutAlign.gt-xs="space-between start" fxLayout.xs="column">
+        <mat-form-field fxFlex="100" fxFlex.gt-xs="48.50" color="primary" appearance="outline">
+          <input type="text" matInput placeholder="Transaction Reference" [formControl]="referenceNumber" [(ngModel)]="data.referenceNumber"
+            required>
+          <mat-error *ngIf="!referenceNumber.valid && referenceNumber.touched">Reference Number is required!</mat-error>
+        </mat-form-field>
+        <mat-form-field fxFlex="100" fxFlex.gt-xs="48.50" color="primary" appearance="outline">
+          <input type="email" matInput placeholder="Email" [formControl]="email" [(ngModel)]="data.email"
+          required>
+          <mat-error *ngIf="!email.valid && email.touched">Not a valid email!</mat-error>
+        </mat-form-field>
+      </div>
+      <div fxLayoutAlign.gt-xs="space-between start" fxLayout.xs="column">
+  
+          <mat-form-field fxFlex="100" fxFlex.gt-xs="48.50" color="primary" appearance="outline">
+            <input type="text"  matInput placeholder="Description/Notes" [formControl]="description" [(ngModel)]="data.description"
+              >
+          </mat-form-field>
+          <mat-form-field fxFlex="100" fxFlex.gt-xs="48.50" color="primary" appearance="outline">
+              <input type="text"  matInput placeholder="External Booking Reference" [formControl]="externalReference" [(ngModel)]="data.externalReference"
+                >
+            </mat-form-field>
+        </div>
+      <div fxLayoutAlign.gt-xs="space-between start" fxLayout.xs="column">
+      <mat-form-field fxFlex="100" fxFlex.gt-xs="25" color="primary" appearance="outline">
+          <input type="text"  matInput placeholder="Amount" [formControl]="amount" [(ngModel)]="data.amount"
+            required>
+          <mat-error *ngIf="!amount.valid && amount.touched">Amount is required!</mat-error>
+        </mat-form-field>
+        <mat-form-field fxFlex="100" fxFlex.gt-xs="25" color="primary" appearance="outline">
+            <mat-select  placeholder="Currency " [(ngModel)]="data.currency" >
+               <mat-option *ngFor="let currency of currencies" [value]="currency.value"  >
+                    {{currency.viewValue}}
+                  </mat-option>
+              </mat-select>
+        </mat-form-field>
+        <mat-form-field fxFlex="100" fxFlex.gt-xs="25" color="primary" appearance="outline">
+            <mat-select placeholder="Mode of Payment" [(ngModel)]="data.paymentMode" [formControl]="paymentMode" required>
+                <mat-option *ngFor="let paymentMode of paymentModes" [value]="paymentMode.value">
+                  {{ paymentMode.viewValue }}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="!paymentMode.valid && paymentMode.touched">Payment mode is required!</mat-error>
+        </mat-form-field>
+    </div>
+  <div fxLayoutAlign.gt-xs="space-between start" fxLayout.xs="column" *ngIf="data.paymentMode=='CARD'">
+    <mat-form-field fxFlex="100" fxFlex.gt-xs="48.50" color="primary" appearance="outline">
+      <input type="text" matInput placeholder="Card Number" [formControl]="cardNumber" [(ngModel)]="data.cardNumber"
+        required>
+      <mat-error *ngIf="!cardNumber.valid && cardNumber.touched">Card Number is required!</mat-error>
+    </mat-form-field>
+    <mat-form-field fxFlex="100" fxFlex.gt-xs="48.50" color="primary" appearance="outline">
+      <input type="text" matInput placeholder="Name On Card" [formControl]="cardHolderName" [(ngModel)]="data.name"
+      required>
+      <mat-error *ngIf="!cardHolderName.valid && cardHolderName.touched">Cardholder Name is required!</mat-error>
+    </mat-form-field>
+  </div>
+  <div fxLayoutAlign.gt-xs="space-between start" fxLayout.xs="column" required *ngIf="data.paymentMode=='CARD'">
+    <mat-form-field fxFlex="100" fxFlex.gt-xs="25" color="primary" appearance="outline">
+        <mat-select placeholder="Expiration Month" [(ngModel)]="data.expMonth" [formControl]="expMonth">
+            <mat-option *ngFor="let month of months" [value]="month.value">
+              {{ month.viewValue }}
+            </mat-option>
+          </mat-select>
+    </mat-form-field>
+    <mat-form-field fxFlex="100" fxFlex.gt-xs="25" color="primary" appearance="outline">
+        <mat-select  placeholder="Expiration Year" [(ngModel)]="data.expYear" [formControl]="expYear" required>
+           <mat-option *ngFor="let year of years" [value]="year.value"  >
+                {{year.viewValue}}
+              </mat-option>
+          </mat-select>
+    </mat-form-field>
+    <mat-form-field fxFlex="100" fxFlex.gt-xs="25" color="primary" appearance="outline">
+        <input type="text"  matInput placeholder="CVV" [formControl]="cvv" [(ngModel)]="data.cvv"
+          required>
+        <mat-error *ngIf="!cvv.valid && cvv.touched">CVV is required!</mat-error>
+      </mat-form-field>
+  </div>
+</div>
+</mat-card-content>
+  <mat-card-actions>
+  <button mat-button color="warn" (click)="reset()">Reset</button>
+  <button mat-button color="primary" (click)="submit()">Submit</button>
+</mat-card-actions>
+
+</mat-card>

@@ -1,0 +1,120 @@
+<mat-progress-bar
+  *ngIf="loader"
+  color="warn"
+  mode="indeterminate"
+></mat-progress-bar>
+<div fxLayoutAlign.gt-xs="space-between start" fxLayout.xs="column">
+  <mat-form-field
+    fxFlex="100"
+    fxFlex.gt-xs="48.50"
+    color="primary"
+    appearance="outline"
+  >
+    <input
+      type="text"
+      matInput
+      placeholder="Name Of the Room"
+      [formControl]="name"
+      [(ngModel)]="data.name"
+      required
+    />
+    <mat-error *ngIf="!name.valid && name.touched"
+      >Room Name is required!</mat-error
+    >
+  </mat-form-field>
+  <mat-form-field
+    fxFlex="100"
+    fxFlex.gt-xs="48.50"
+    color="primary"
+    appearance="outline"
+  >
+    <input
+      type="number"
+      matInput
+      placeholder="No Of Rooms"
+      [formControl]="noOfRooms"
+      [(ngModel)]="data.noOfRooms"
+      required
+    />
+    <mat-error *ngIf="!noOfRooms.valid && noOfRooms.touched"
+      >Number of Rooms is required!</mat-error
+    >
+  </mat-form-field>
+</div>
+<div fxLayoutAlign.gt-xs="space-between start">
+  <mat-form-field
+    fxFlex="100"
+    fxFlex.gt-xs="48.50"
+    color="primary"
+    appearance="outline"
+  >
+    <input
+      type="number"
+      matInput
+      placeholder="No Of Person(Min)"
+      [formControl]="minimumOccupancy"
+      [(ngModel)]="data.minimumOccupancy"
+    />
+  </mat-form-field>
+  <mat-form-field
+    fxFlex="100"
+    fxFlex.gt-xs="48.50"
+    color="primary"
+    appearance="outline"
+  >
+    <input
+      type="number"
+      matInput
+      placeholder="No Of Person(Max)"
+      [formControl]="maximumOccupancy"
+      [(ngModel)]="data.maximumOccupancy"
+    />
+  </mat-form-field>
+</div>
+<div>
+  <div fxLayoutAlign.gt-xs="space-between start" fxLayout.xs="column">
+    <mat-form-field
+      fxFlex="100"
+      fxFlex.gt-xs="48.50"
+      color="primary"
+      appearance="outline"
+    >
+      <input
+        type="number"
+        matInput
+        placeholder="Room Only Price"
+        [formControl]="roomOnlyPrice"
+        [(ngModel)]="data.roomOnlyPrice"
+        required
+      />
+      <mat-error *ngIf="!roomOnlyPrice.valid && roomOnlyPrice.touched"
+        >Shared Accomodation Flag is required!</mat-error
+      >
+    </mat-form-field>
+    <mat-form-field
+      fxFlex="100"
+      fxFlex.gt-xs="48.50"
+      color="primary"
+      appearance="outline"
+    >
+      <input
+        type="text"
+        matInput
+        placeholder="Extra Charge Per Person"
+        [formControl]="isShared"
+        [(ngModel)]="data.extraChargePerPerson"
+        required
+      />
+      <mat-error
+        *ngIf="!extraChargePerPerson.valid && extraChargePerPerson.touched"
+        >Extracharge per Person is required!</mat-error
+      >
+    </mat-form-field>
+  </div>
+  <div fxLayoutAlign.gt-xs="space-between start" fxLayout.xs="column">
+    <button mat-button color="warn">Reset</button
+    ><button mat-button color="primary" (click)="saveRoomDetails()">
+      Save
+    </button>
+  </div>
+</div>

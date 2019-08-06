@@ -1,0 +1,69 @@
+<!-- List of Available Room-->
+<mat-card fxFlex="100" fxFlex.gt-xs="100">
+  <mat-progress-bar
+    *ngIf="loader"
+    color="warn"
+    mode="indeterminate"
+  ></mat-progress-bar>
+  <mat-card-title>{{ pageTitle }}</mat-card-title>
+  <mat-card-content>
+    <div *ngIf="!this.room.shared">
+      <mat-form-field
+        fxFlex="100"
+        fxFlex.gt-xs="100"
+        color="primary"
+        appearance="outline"
+      >
+        <mat-select
+          placeholder="Room No"
+          class="form-control"
+          [disabled]="loader"
+          [formControl]="availableRooms"
+          [(value)]="roomNumbers"
+          multiple
+        >
+          <mat-option
+            *ngFor="let roomOption of roomOptions"
+            [value]="roomOption.value"
+          >
+            {{ roomOption.viewValue }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div  *ngIf="this.room.shared">
+        <mat-form-field
+          fxFlex="100"
+          fxFlex.gt-xs="100"
+          color="primary"
+          appearance="outline"
+        >
+          <mat-select
+            placeholder="Bed No"
+            class="form-control"
+            [disabled]="loader"
+            [formControl]="availableBeds"
+            [(value)]="bedNumbers"
+            multiple
+          >
+            <mat-option
+              *ngFor="let bedOption of bedOptions"
+              [value]="bedOption.value"
+            >
+              {{ bedOption.viewValue }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+  </mat-card-content>
+  <mat-card-actions>
+    <button
+      mat-icon-button
+      color="primary"
+      [disabled]="loader"
+      (click)="checkin()"
+    >
+      <em>CheckIn</em>
+    </button>
+  </mat-card-actions>
+</mat-card>

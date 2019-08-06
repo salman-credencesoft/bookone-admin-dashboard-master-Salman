@@ -1,0 +1,167 @@
+<!--app-main-nav *ngIf="showNavbar"></app-main-nav-->
+<mat-progress-bar
+  *ngIf="loader"
+  color="warn"
+  mode="indeterminate"
+></mat-progress-bar>
+<br />
+<br />
+<mat-card class="p-2 custom__card">
+  <mat-card-content>
+    <div fxLayout="column">
+      <div>
+        <mat-form-field color="primary">
+          <input
+            matInput
+            (keyup)="applyFilter($event.target.value)"
+            placeholder="Filter"
+          />
+        </mat-form-field>
+        <button
+          mat-icon-button
+          style="color:rgb(0, 0, 0);"
+          focusable="false"
+          (click)="createExpenseDialog()"
+        >
+          <mat-icon>add</mat-icon> New Expense
+        </button>
+      </div>
+
+      <!-- ****************************Data Table*********************************** -->
+      <div fxFlex="100">
+        <table
+          mat-table
+          [dataSource]="dataSource"
+          multiTemplateDataRows
+          class="mat-elevation-z8"
+        >
+          <!-- Reference column -->
+          <ng-container matColumnDef="id">
+            <th mat-header-cell *matHeaderCellDef>
+              <h3 style="color:rgb(0, 0, 0);">Reference</h3>
+            </th>
+            <td mat-cell *matCellDef="let row" data-label="id">
+              <h3>{{ row.id }}</h3>
+            </td>
+          </ng-container>
+
+          <!-- Expense Date-->
+          <ng-container matColumnDef="date">
+            <th mat-header-cell *matHeaderCellDef>
+              <h3 style="color:rgb(0, 0, 0);">Date</h3>
+            </th>
+            <td mat-cell *matCellDef="let row" data-label="date">
+              {{ row.date }}
+            </td>
+          </ng-container>
+
+          <!-- Name Column -->
+          <ng-container matColumnDef="type">
+            <th mat-header-cell *matHeaderCellDef>
+              <h3 style="color:rgb(0, 0, 0);">Type</h3>
+            </th>
+            <td mat-cell *matCellDef="let row" data-label="type">
+              {{ row.name }}
+            </td>
+          </ng-container>
+
+          <!-- Description Column -->
+          <ng-container matColumnDef="description">
+            <th mat-header-cell *matHeaderCellDef>
+              <h3 style="color:rgb(0, 0, 0);">Description</h3>
+            </th>
+            <td mat-cell *matCellDef="let row" data-label="description">
+              {{ row.description }}
+            </td>
+          </ng-container>
+
+          <!-- Amount Column -->
+          <ng-container matColumnDef="amount">
+            <th mat-header-cell *matHeaderCellDef>
+              <h3 style="color:rgb(0, 0, 0);">Amount</h3>
+            </th>
+            <td mat-cell *matCellDef="let row" data-label="amount">
+              {{ row.amount }}
+            </td>
+          </ng-container>
+
+          <!-- ReceiptNo Column -->
+          <ng-container matColumnDef="receiptno">
+            <th mat-header-cell *matHeaderCellDef>
+              <h3 style="color:rgb(0, 0, 0);">Receipt No</h3>
+            </th>
+            <td
+              mat-cell
+              *matCellDef="let row"
+              [style.color]="row.color"
+              data-label="receiptno"
+            >
+              {{ row.receiptNumber }}
+            </td>
+          </ng-container>
+
+          <!-- Action Column -->
+          <ng-container matColumnDef="action">
+            <th mat-header-cell *matHeaderCellDef>
+              <h3 style="color:rgb(0, 0, 0);">Action</h3>
+            </th>
+            <td mat-cell *matCellDef="let row">
+              <button
+                mat-icon-button
+                [matMenuTriggerFor]="taskOptions"
+                class="task__options"
+                color="primary"
+              >
+                <mat-icon>more_vert</mat-icon>
+              </button>
+              <mat-menu #taskOptions="matMenu">
+                <button
+                  mat-menu-item
+                  color="primary"
+                  (click)="updateExpenseDialog(row)"
+                >
+                  <mat-icon color="warn">edit</mat-icon><span>Edit</span>
+                </button>
+                <!--button mat-menu-item><mat-icon>cloud_download</mat-icon><span>Download</span></button-->
+              </mat-menu>
+            </td>
+          </ng-container>
+
+          <!-- Expanded Content Columns -->
+          <ng-container matColumnDef="expandedDetail">
+            <td
+              mat-cell
+              *matCellDef="let row"
+              [attr.colspan]="displayedColumns.length"
+            >
+              <div
+                class="example-element-detail"
+                [@detailExpand]="
+                  row == expandedElement ? 'expanded' : 'collapsed'
+                "
+              >
+                <div class="example-element-description">{{ row.name }} .</div>
+              </div>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr
+            mat-row
+            *matRowDef="let row; columns: displayedColumns"
+            class="example-element-row"
+            [class.example-expanded-row]="expandedElement === row"
+            (click)="expandedElement = expandedElement === row ? null : row"
+          ></tr>
+          <tr
+            mat-row
+            *matRowDef="let row; columns: ['expandedDetail']"
+            class="example-detail-row"
+          ></tr>
+        </table>
+
+        <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>
